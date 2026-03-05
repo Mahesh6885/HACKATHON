@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
     FileText,
@@ -15,10 +15,13 @@ import './AppLayout.css';
 
 const AppLayout = () => {
     const navigate = useNavigate();
-    // In a real app, this would come from an auth context
-    const userRole = 'student'; // 'student' or 'admin'
+    const location = useLocation();
+
+    // Get userRole from localStorage; fallback to student
+    const userRole = localStorage.getItem('userRole') || 'student';
 
     const handleLogout = () => {
+        localStorage.removeItem('userRole');
         navigate('/login');
     };
 
@@ -34,45 +37,49 @@ const AppLayout = () => {
                 </div>
 
                 <nav className="sidebar-nav">
-                    <NavLink to="/dashboard" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                        <LayoutDashboard size={20} />
-                        <span>Dashboard</span>
-                    </NavLink>
+                    {userRole === 'admin' ? (
+                        <>
+                            <NavLink to="/admin" className={({ isActive }) => isActive || location.pathname === '/admin' ? "nav-item active" : "nav-item"}>
+                                <Users size={20} />
+                                <span>Admin Dashboard</span>
+                            </NavLink>
+                        </>
+                    ) : (
+                        <>
+                            <NavLink to="/dashboard" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                                <LayoutDashboard size={20} />
+                                <span>Dashboard</span>
+                            </NavLink>
 
-                    <NavLink to="/resume" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                        <FileText size={20} />
-                        <span>Resume Screen</span>
-                    </NavLink>
+                            <NavLink to="/resume" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                                <FileText size={20} />
+                                <span>Resume Screen</span>
+                            </NavLink>
 
-                    <NavLink to="/tests" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                        <BarChart2 size={20} />
-                        <span>Test Scores</span>
-                    </NavLink>
+                            <NavLink to="/tests" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                                <BarChart2 size={20} />
+                                <span>Test Scores</span>
+                            </NavLink>
 
-                    <NavLink to="/certifications" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                        <Award size={20} />
-                        <span>Certifications</span>
-                    </NavLink>
+                            <NavLink to="/certifications" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                                <Award size={20} />
+                                <span>Certifications</span>
+                            </NavLink>
 
-                    <NavLink to="/interviews" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                        <MessageSquare size={20} />
-                        <span>Mock Interviews</span>
-                    </NavLink>
-
-                    {userRole === 'admin' && (
-                        <NavLink to="/admin" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"} style={{ marginTop: 'auto' }}>
-                            <Users size={20} />
-                            <span>Admin View</span>
-                        </NavLink>
+                            <NavLink to="/interviews" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                                <MessageSquare size={20} />
+                                <span>Mock Interviews</span>
+                            </NavLink>
+                        </>
                     )}
                 </nav>
 
                 <div className="sidebar-footer">
                     <div className="user-profile">
-                        <div className="avatar">JD</div>
+                        <div className="avatar">{userRole === 'admin' ? 'AD' : 'JD'}</div>
                         <div className="user-info">
-                            <span className="user-name">John Doe</span>
-                            <span className="user-role">Student CSE</span>
+                            <span className="user-name">{userRole === 'admin' ? 'Administrator' : 'John Doe'}</span>
+                            <span className="user-role">{userRole === 'admin' ? 'Placement Cell' : 'Student CSE'}</span>
                         </div>
                     </div>
                 </div>
@@ -83,7 +90,7 @@ const AppLayout = () => {
                 <header className="top-header">
                     <div className="header-search">
                         <Search size={18} color="var(--text-muted)" />
-                        <input type="text" placeholder="Search tasks, tests..." className="search-input" />
+                        <input type="text" placeholder={userRole === 'admin' ? "Search students, departments..." : "Search tasks, tests..."} className="search-input" />
                     </div>
 
                     <div className="header-actions">

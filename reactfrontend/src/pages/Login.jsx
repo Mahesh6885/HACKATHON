@@ -17,10 +17,13 @@ export default function Login() {
         // Simulate API call
         setTimeout(() => {
             setIsLoading(false);
-            // Route based on input data instead of role selection
-            if (email.toLowerCase().includes('admin')) {
+
+            // Route based on specific admin credentials
+            if (email === 'admin' || email === 'admin@university.edu') {
+                localStorage.setItem('userRole', 'admin');
                 navigate('/admin');
             } else {
+                localStorage.setItem('userRole', 'student');
                 navigate('/dashboard');
             }
         }, 800);
@@ -39,14 +42,14 @@ export default function Login() {
 
                 <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-group">
-                        <label className="form-label" htmlFor="email">Email Address</label>
+                        <label className="form-label" htmlFor="email">Email Address or ID</label>
                         <div className="input-icon-wrapper">
                             <Mail className="input-icon" size={18} />
                             <input
                                 id="email"
-                                type="email"
+                                type="text"
                                 className="input-with-icon"
-                                placeholder="student@university.edu"
+                                placeholder="Student Email or Admin ID"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
