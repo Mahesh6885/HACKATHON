@@ -233,9 +233,17 @@
 }
 
 .content-area {
-    padding: 2rem 2.5rem;
+    padding: 1.5rem 2rem;
     overflow-y: auto;
     flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1440px) {
+    .content-area {
+        padding: 2.5rem 3.5rem;
+    }
 }
 
 /* Base structural classes */
