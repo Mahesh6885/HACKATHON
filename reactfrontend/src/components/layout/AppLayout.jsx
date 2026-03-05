@@ -33,7 +33,7 @@ const AppLayout = () => {
                     <div className="logo-icon">
                         <GraduationCap size={28} />
                     </div>
-                    <div className="sidebar-brand">ReadyDashboard</div>
+                    <div className="sidebar-brand">SkillSprint</div>
                 </div>
 
                 <nav className="sidebar-nav">

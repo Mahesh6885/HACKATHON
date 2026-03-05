@@ -36,12 +36,19 @@ export default function Dashboard() {
         { label: 'Certifications', value: '3', icon: Award, color: 'text-amber-600' }
     ];
 
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good morning';
+        if (hour < 17) return 'Good afternoon';
+        return 'Good evening';
+    };
+
     return (
         <div className="dashboard-wrapper">
             {/* Header with Personalized Greeting */}
             <div className="page-header decorative">
                 <div className="header-greeting">
-                    <h1 className="page-title">Good morning, John! ✨</h1>
+                    <h1 className="page-title">{getGreeting()}, John! ✨</h1>
                     <p className="page-subtitle">You're in the top 15% of your batch. Keep up the great work!</p>
                 </div>
                 <div className="header-badges">

@@ -19,8 +19,7 @@ const AdminLayout = () => {
                         <GraduationCap size={24} />
                     </div>
                     <div>
-                        <div className="admin-brand">PlacementIQ</div>
-                        <div className="admin-brand-sub">Admin Portal</div>
+                        <div className="admin-brand">SkillSprint</div>
                     </div>
                 </div>
 

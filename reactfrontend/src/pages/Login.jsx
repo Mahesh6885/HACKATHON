@@ -36,8 +36,7 @@ export default function Login() {
                     <div className="login-logo">
                         <GraduationCap size={32} strokeWidth={2} />
                     </div>
-                    <h1 className="login-title">Welcome Back</h1>
-                    <p className="login-subtitle">Sign in to your Placement Dashboard</p>
+                    <h1 className="login-title">Skillsprint</h1>
                 </div>
 
                 <form className="login-form" onSubmit={handleLogin}>
