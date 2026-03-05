@@ -1,0 +1,297 @@
+/* ============================================
+   PlacementIQ - Student Maintenance Styles
+   ============================================ */
+
+.student-maintenance {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    color: #e2e8f0;
+}
+
+.sm-header {}
+
+.sm-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: -0.02em;
+}
+
+.sm-sub {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Search Card */
+.sm-search-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.sm-search-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 1.5rem;
+}
+
+.sm-search-title svg {
+    color: #06b6d4;
+}
+
+.sm-search-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.sm-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sm-form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.sm-form-group select,
+.sm-form-group input {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(6, 182, 212, 0.15);
+    border-radius: 10px;
+    color: #e2e8f0;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    width: 100%;
+}
+
+.sm-form-group select:focus,
+.sm-form-group input:focus {
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.08);
+}
+
+.sm-form-group select option {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+.sm-form-group input::placeholder {
+    color: #334155;
+}
+
+.sm-search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 2rem;
+    background: linear-gradient(135deg, #06b6d4, #10b981);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+}
+
+.sm-search-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 24px rgba(6, 182, 212, 0.4);
+}
+
+/* Results */
+.sm-results-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.sm-results-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.sm-no-results {
+    padding: 3rem;
+    text-align: center;
+    color: #475569;
+}
+
+.sm-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    padding: 1.5rem;
+}
+
+.sm-student-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color 0.2s;
+}
+
+.sm-student-card:hover {
+    border-color: rgba(6, 182, 212, 0.2);
+    box-shadow: 0 4px 20px rgba(6, 182, 212, 0.08);
+}
+
+.sm-student-header {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
+
+.sm-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #06b6d4, #10b981);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+    flex-shrink: 0;
+}
+
+.sm-student-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #f1f5f9;
+}
+
+.sm-student-roll {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 0.15rem;
+}
+
+.sm-metrics {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.sm-metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sm-metric svg {
+    color: #06b6d4;
+}
+
+.sm-metric-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #475569;
+    font-weight: 600;
+}
+
+.sm-metric-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.sm-student-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sm-status {
+    padding: 0.2rem 0.65rem;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.sm-status-green {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+}
+
+.sm-status-yellow {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+}
+
+.sm-status-red {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+}
+
+.sm-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 7px;
+    color: #06b6d4;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sm-view-btn:hover {
+    background: rgba(6, 182, 212, 0.15);
+}
+
+@media (max-width: 1024px) {
+    .sm-search-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sm-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .sm-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
