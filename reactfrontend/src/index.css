@@ -61,6 +61,10 @@ body {
   min-height: 100vh;
 }
 
+a {
+  text-decoration: none;
+}
+
 /* Updated Utility Classes to be less 'glassy' and more professional */
 .glass-card {
   background: var(--bg-secondary);
