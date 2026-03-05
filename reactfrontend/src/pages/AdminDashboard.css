@@ -1,13 +1,12 @@
 /* ============================================
-   PlacementIQ - Admin Dashboard Styles
-   Dark Glassmorphism
+   PlacementIQ - Light Professional Admin Dashboard
    ============================================ */
 
 .admin-dashboard {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    color: #e2e8f0;
+    color: #0f172a;
 }
 
 /* Header */
@@ -15,39 +14,94 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .adash-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #f1f5f9;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
     letter-spacing: -0.02em;
+    margin-bottom: 0.15rem;
 }
 
 .adash-sub {
     color: #64748b;
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.adash-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.adash-import-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    background: #16a34a;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);
+}
+
+.adash-import-btn:hover {
+    background: #15803d;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+}
+
+.adash-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    background: #2563eb;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+}
+
+.adash-add-btn:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .adash-export-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.25rem;
-    background: rgba(6, 182, 212, 0.1);
-    border: 1px solid rgba(6, 182, 212, 0.3);
-    border-radius: 10px;
-    color: #06b6d4;
-    font-size: 0.9rem;
-    font-weight: 600;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    font-family: inherit;
 }
 
 .adash-export-btn:hover {
-    background: rgba(6, 182, 212, 0.2);
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+    border-color: #93c5fd;
+    color: #2563eb;
+    background: #eff6ff;
 }
 
 /* Stats Cards */
@@ -58,397 +112,556 @@
 }
 
 .adash-stat-card {
-    position: relative;
-    overflow: hidden;
-    background: rgba(30, 41, 59, 0.7);
-    border-radius: 14px;
-    padding: 1.5rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(10px);
-    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s;
 }
 
 .adash-stat-card:hover {
-    transform: translateY(-2px);
-}
-
-.adash-stat-card.cyan {
-    border-color: rgba(6, 182, 212, 0.2);
-}
-
-.adash-stat-card.green {
-    border-color: rgba(16, 185, 129, 0.2);
-}
-
-.adash-stat-card.blue {
-    border-color: rgba(59, 130, 246, 0.2);
-}
-
-.adash-stat-card.red {
-    border-color: rgba(239, 68, 68, 0.2);
-}
-
-.adash-stat-card.cyan:hover {
-    box-shadow: 0 8px 30px rgba(6, 182, 212, 0.15);
-}
-
-.adash-stat-card.green:hover {
-    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15);
-}
-
-.adash-stat-card.blue:hover {
-    box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
-}
-
-.adash-stat-card.red:hover {
-    box-shadow: 0 8px 30px rgba(239, 68, 68, 0.15);
-}
-
-.adash-stat-glow {
-    position: absolute;
-    top: -30px;
-    right: -30px;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    filter: blur(30px);
-    opacity: 0.3;
-}
-
-.adash-stat-card.cyan .adash-stat-glow {
-    background: #06b6d4;
-}
-
-.adash-stat-card.green .adash-stat-glow {
-    background: #10b981;
-}
-
-.adash-stat-card.blue .adash-stat-glow {
-    background: #3b82f6;
-}
-
-.adash-stat-card.red .adash-stat-glow {
-    background: #ef4444;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .adash-stat-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.adash-stat-card.cyan .adash-stat-icon {
-    background: rgba(6, 182, 212, 0.15);
-    color: #06b6d4;
+.blue-icon {
+    background: #eff6ff;
+    color: #2563eb;
 }
 
-.adash-stat-card.green .adash-stat-icon {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
+.green-icon {
+    background: #f0fdf4;
+    color: #16a34a;
 }
 
-.adash-stat-card.blue .adash-stat-icon {
-    background: rgba(59, 130, 246, 0.15);
-    color: #60a5fa;
+.indigo-icon {
+    background: #eef2ff;
+    color: #4f46e5;
 }
 
-.adash-stat-card.red .adash-stat-icon {
-    background: rgba(239, 68, 68, 0.15);
-    color: #f87171;
-}
-
-.adash-stat-info {
-    display: flex;
-    flex-direction: column;
+.red-icon {
+    background: #fff5f5;
+    color: #dc2626;
 }
 
 .adash-stat-value {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    color: #f1f5f9;
+    color: #0f172a;
     letter-spacing: -0.02em;
 }
 
 .adash-stat-label {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: #64748b;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    margin-top: 0.1rem;
 }
 
-/* Table Card */
+/* Section Title */
+.adash-section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+}
+
+/* Department Cards */
+.adash-dept-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.1rem;
+}
+
+.adash-dept-card {
+    border: 1px solid;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.adash-dept-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.adash-dept-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.adash-dept-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.adash-dept-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 0.1rem;
+}
+
+.adash-dept-count {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-top: 0.35rem;
+}
+
+/* Student Card Section */
 .adash-table-card {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
     overflow: hidden;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-/* Table Controls */
 .adash-table-controls {
-    padding: 1.25rem 1.5rem;
+    padding: 1.1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(15, 23, 42, 0.4);
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
 .adash-table-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.adash-active-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.5rem 0.2rem 0.65rem;
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 20px;
+    font-size: 0.75rem;
     font-weight: 600;
-    font-size: 1.05rem;
-    color: #f1f5f9;
-    letter-spacing: -0.01em;
+}
+
+.adash-active-filter button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
 }
 
 .adash-table-filters {
     display: flex;
-    gap: 0.875rem;
+    gap: 0.6rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .adash-search {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(6, 182, 212, 0.15);
+    gap: 0.4rem;
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 0.45rem 0.875rem;
-    width: 240px;
-    transition: border-color 0.2s;
+    padding: 0.4rem 0.75rem;
+    width: 210px;
+    transition: border-color 0.15s;
 }
 
 .adash-search:focus-within {
-    border-color: rgba(6, 182, 212, 0.4);
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.07);
 }
 
 .adash-search svg {
-    color: #475569;
+    color: #94a3b8;
 }
 
 .adash-search input {
     background: transparent;
     border: none;
     outline: none;
-    color: #e2e8f0;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     width: 100%;
+    color: #0f172a;
+    font-family: inherit;
 }
 
 .adash-search input::placeholder {
-    color: #475569;
+    color: #94a3b8;
 }
 
-.adash-filter-select-wrapper {
+.adash-filter-wrap {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(6, 182, 212, 0.15);
+    gap: 0.35rem;
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 0.45rem 0.875rem;
-    color: #94a3b8;
-    cursor: pointer;
-    transition: border-color 0.2s;
+    padding: 0.4rem 0.65rem;
+    color: #64748b;
+    transition: border-color 0.15s;
 }
 
-.adash-filter-select-wrapper:hover {
-    border-color: rgba(6, 182, 212, 0.35);
-    color: #06b6d4;
+.adash-filter-wrap:focus-within {
+    border-color: #93c5fd;
 }
 
-.adash-filter-select-wrapper select {
+.adash-filter-wrap svg {
+    flex-shrink: 0;
+}
+
+.adash-filter-wrap select {
     background: transparent;
     border: none;
     outline: none;
-    color: inherit;
-    font-size: 0.875rem;
-    cursor: pointer;
-}
-
-.adash-filter-select-wrapper select option {
-    background: #1e293b;
-    color: #e2e8f0;
-}
-
-/* Table */
-.adash-table-wrapper {
-    overflow-x: auto;
-}
-
-.adash-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.adash-table th {
-    padding: 0.875rem 1.25rem;
-    text-align: left;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: #475569;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    white-space: nowrap;
+    cursor: pointer;
+    font-family: inherit;
 }
 
-.adash-table td {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    vertical-align: middle;
+/* Student Row Cards */
+.adash-student-list {
+    display: flex;
+    flex-direction: column;
 }
 
-.adash-table tbody tr {
-    transition: background-color 0.15s;
+.adash-student-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.12s;
 }
 
-.adash-table tbody tr:hover {
-    background: rgba(6, 182, 212, 0.04);
-}
-
-.adash-table tbody tr:last-child td {
+.adash-student-row:last-child {
     border-bottom: none;
 }
 
-.adash-student-cell {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
+.adash-student-row:hover {
+    background: #f8fafc;
 }
 
-.adash-student-avatar {
-    width: 38px;
-    height: 38px;
+.adash-student-thumb {
+    width: 42px;
+    height: 42px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #06b6d4, #10b981);
+    background: #2563eb;
     color: white;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
-.adash-student-name {
+.adash-student-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.adash-sname {
     font-weight: 600;
-    color: #f1f5f9;
-    font-size: 0.9rem;
-}
-
-.adash-student-email {
-    font-size: 0.78rem;
-    color: #475569;
-}
-
-.adash-dept-badge {
-    padding: 0.25rem 0.65rem;
-    background: rgba(99, 102, 241, 0.12);
-    color: #818cf8;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.adash-cgpa {
     font-size: 0.95rem;
-    font-weight: 700;
-    color: #e2e8f0;
+    color: #0f172a;
 }
 
-.adash-score-pill {
-    display: inline-flex;
+.adash-sroll {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin-top: 0.1rem;
+}
+
+.adash-student-mid {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0.25rem 0.75rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    min-width: 56px;
+    gap: 0.6rem;
 }
 
-.score-glow-green {
-    background: rgba(16, 185, 129, 0.12);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.score-glow-yellow {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.score-glow-red {
-    background: rgba(239, 68, 68, 0.12);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.adash-status-badge {
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
+.adash-badge {
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
     font-weight: 600;
+    white-space: nowrap;
 }
 
-.status-completed {
-    background: rgba(16, 185, 129, 0.12);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+.badge-green {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
 }
 
-.status-pending {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+.badge-yellow {
+    background: #fefce8;
+    color: #ca8a04;
+    border: 1px solid #fef08a;
 }
 
-.status-not-started {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.15);
+.badge-red {
+    background: #fff5f5;
+    color: #dc2626;
+    border: 1px solid #fecaca;
 }
 
-.adash-view-btn {
+.adash-score-chip {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+}
+
+.adash-row-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.adash-edit-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     padding: 0.35rem 0.8rem;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
     border-radius: 7px;
-    background: rgba(6, 182, 212, 0.08);
-    border: 1px solid rgba(6, 182, 212, 0.2);
-    color: #06b6d4;
-    font-size: 0.85rem;
+    color: #2563eb;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    font-family: inherit;
 }
 
-.adash-view-btn:hover {
-    background: rgba(6, 182, 212, 0.18);
-    box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+.adash-edit-btn:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.adash-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.8rem;
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 7px;
+    color: #dc2626;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.adash-delete-btn:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
 }
 
 .adash-empty {
-    text-align: center;
     padding: 3rem;
-    color: #475569;
+    text-align: center;
+    color: #94a3b8;
     font-size: 0.95rem;
+}
+
+/* Modal */
+.adash-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(2px);
+}
+
+.adash-modal {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    width: min(560px, 94vw);
+    overflow: hidden;
+}
+
+.adash-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.adash-modal-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.adash-modal-header button {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.2rem;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+
+.adash-modal-header button:hover {
+    color: #0f172a;
+}
+
+.adash-modal-body {
+    padding: 1.5rem;
+}
+
+.adash-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.adash-modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.adash-modal-field label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.adash-modal-field input,
+.adash-modal-field select {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #0f172a;
+    padding: 0.6rem 0.875rem;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+    width: 100%;
+}
+
+.adash-modal-field input:focus,
+.adash-modal-field select:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    background: white;
+}
+
+.adash-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    background: #f8fafc;
+}
+
+.adash-modal-cancel {
+    padding: 0.6rem 1.25rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.adash-modal-cancel:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.adash-modal-save {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    transition: all 0.15s;
+}
+
+.adash-modal-save:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 @media (max-width: 1024px) {
     .adash-stats-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .adash-dept-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .adash-modal-grid {
+        grid-template-columns: 1fr;
     }
 }

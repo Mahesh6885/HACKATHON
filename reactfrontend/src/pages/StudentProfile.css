@@ -1,18 +1,18 @@
 /* ============================================
-   PlacementIQ - Student Profile Page Styles
+   PlacementIQ - Light Student Profile Styles
    ============================================ */
 
 .student-profile {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
-    color: #e2e8f0;
+    color: #0f172a;
 }
 
 .sp-not-found {
     text-align: center;
     padding: 4rem;
-    color: #64748b;
+    color: #94a3b8;
 }
 
 /* Back Button */
@@ -21,60 +21,49 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: rgba(6, 182, 212, 0.08);
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    color: #06b6d4;
+    color: #475569;
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     align-self: flex-start;
+    font-family: inherit;
 }
 
 .sp-back-btn:hover {
-    background: rgba(6, 182, 212, 0.15);
-    box-shadow: 0 0 14px rgba(6, 182, 212, 0.15);
+    border-color: #93c5fd;
+    color: #2563eb;
+    background: #eff6ff;
 }
 
-/* Profile Header Card */
+/* Header Card */
 .sp-header-card {
     display: flex;
     align-items: center;
     gap: 2rem;
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 16px;
     padding: 2rem;
-    backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
-}
-
-.sp-header-card::before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
-    pointer-events: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .sp-avatar-large {
     width: 72px;
     height: 72px;
     border-radius: 16px;
-    background: linear-gradient(135deg, #06b6d4, #10b981);
+    background: #2563eb;
     color: white;
     font-size: 1.75rem;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 24px rgba(6, 182, 212, 0.3);
     flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .sp-header-info {
@@ -82,9 +71,9 @@
 }
 
 .sp-name {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #f1f5f9;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
     letter-spacing: -0.02em;
     margin-bottom: 0.4rem;
 }
@@ -92,8 +81,8 @@
 .sp-meta {
     display: flex;
     gap: 1.25rem;
-    color: #64748b;
-    font-size: 0.875rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
     margin-bottom: 0.75rem;
 }
 
@@ -111,15 +100,16 @@
 }
 
 .sp-tag {
-    padding: 0.25rem 0.75rem;
+    padding: 0.25rem 0.7rem;
     border-radius: 6px;
-    background: rgba(99, 102, 241, 0.1);
-    color: #818cf8;
-    font-size: 0.8rem;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 0.78rem;
     font-weight: 600;
+    border: 1px solid #bfdbfe;
 }
 
-/* Overall Score Ring */
+/* Score Ring */
 .sp-overall-score {
     flex-shrink: 0;
 }
@@ -137,24 +127,25 @@
 .sp-score-inner {
     width: 100%;
     height: 100%;
-    background: #0f172a;
+    background: white;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    box-shadow: inset 0 0 0 1px #f1f5f9;
 }
 
 .sp-score-number {
     font-size: 1.5rem;
     font-weight: 800;
-    color: #f1f5f9;
+    color: #0f172a;
 }
 
 .sp-score-label {
-    font-size: 0.7rem;
-    color: #64748b;
-    font-weight: 600;
+    font-size: 0.68rem;
+    color: #94a3b8;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
@@ -163,16 +154,15 @@
 .sp-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
     gap: 1.5rem;
 }
 
 .sp-card {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 14px;
     padding: 1.5rem 1.75rem;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .sp-card-header {
@@ -180,13 +170,13 @@
     align-items: center;
     gap: 0.6rem;
     margin-bottom: 1.25rem;
-    color: #06b6d4;
+    color: #2563eb;
 }
 
 .sp-card-header h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #f1f5f9;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
 }
 
 .sp-radar-card {
@@ -204,14 +194,12 @@
     grid-row: 2;
 }
 
-/* Score Items */
+/* Scores */
 .sp-score-items {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 }
-
-.sp-score-item {}
 
 .sp-score-item-header {
     display: flex;
@@ -219,7 +207,7 @@
     align-items: center;
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: #64748b;
 }
 
 .sp-score-item-header span {
@@ -230,12 +218,12 @@
 
 .sp-score-val {
     font-weight: 700;
-    color: #f1f5f9;
+    color: #0f172a;
 }
 
 .sp-progress-bar {
     height: 8px;
-    background: rgba(255, 255, 255, 0.06);
+    background: #f1f5f9;
     border-radius: 99px;
     overflow: hidden;
 }
@@ -247,23 +235,20 @@
 }
 
 .sp-progress-fill.green {
-    background: linear-gradient(90deg, #10b981, #34d399);
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(90deg, #16a34a, #4ade80);
 }
 
 .sp-progress-fill.cyan {
-    background: linear-gradient(90deg, #06b6d4, #22d3ee);
-    box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
 }
 
 .sp-progress-fill.purple {
-    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
-    box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+    background: linear-gradient(90deg, #7c3aed, #a78bfa);
 }
 
 .sp-divider {
     height: 1px;
-    background: rgba(255, 255, 255, 0.05);
+    background: #f1f5f9;
 }
 
 .sp-placed-row {
@@ -271,48 +256,50 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.9rem;
-    color: #94a3b8;
+    color: #64748b;
     font-weight: 500;
 }
 
 .sp-placed {
-    color: #10b981;
+    color: #16a34a;
     font-weight: 700;
 }
 
 .sp-unplaced {
-    color: #f87171;
+    color: #dc2626;
     font-weight: 700;
 }
 
-/* Admin Notes */
+/* Notes */
 .sp-notes-hint {
     font-size: 0.8rem;
-    color: #475569;
+    color: #94a3b8;
     margin-bottom: 1rem;
 }
 
 .sp-notes-textarea {
     width: 100%;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(6, 182, 212, 0.15);
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 10px;
-    color: #e2e8f0;
+    color: #0f172a;
     padding: 0.875rem 1rem;
     font-size: 0.9rem;
     font-family: 'Inter', system-ui, sans-serif;
     resize: vertical;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
 }
 
 .sp-notes-textarea:focus {
-    border-color: rgba(6, 182, 212, 0.4);
-    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.08);
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    background: white;
 }
 
 .sp-notes-textarea::placeholder {
-    color: #334155;
+    color: #cbd5e1;
 }
 
 .sp-save-btn {
@@ -321,46 +308,47 @@
     gap: 0.5rem;
     margin-top: 1rem;
     padding: 0.6rem 1.5rem;
-    background: linear-gradient(135deg, #06b6d4, #10b981);
+    background: #2563eb;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     color: white;
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+    transition: all 0.15s;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 .sp-save-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 0 24px rgba(6, 182, 212, 0.4);
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-/* Status badges re-used from AdminDashboard */
+/* Status badges (used inside the profile card) */
 .adash-status-badge {
     padding: 0.3rem 0.8rem;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
 }
 
 .sps-completed {
-    background: rgba(16, 185, 129, 0.12);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
 }
 
 .sps-pending {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    background: #fefce8;
+    color: #ca8a04;
+    border: 1px solid #fef08a;
 }
 
 .sps-not-started {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.15);
+    background: #fff5f5;
+    color: #dc2626;
+    border: 1px solid #fecaca;
 }
 
 @media (max-width: 768px) {
@@ -378,6 +366,5 @@
     .sp-header-card {
         flex-direction: column;
         align-items: flex-start;
-        text-align: left;
     }
 }

@@ -1,68 +1,68 @@
 /* ============================================
-   PlacementIQ - Student Maintenance Styles
+   PlacementIQ - Light Student Maintenance
    ============================================ */
 
 .student-maintenance {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
-    color: #e2e8f0;
+    color: #0f172a;
 }
 
 .sm-header {}
 
 .sm-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #f1f5f9;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
     letter-spacing: -0.02em;
 }
 
 .sm-sub {
     color: #64748b;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     margin-top: 0.25rem;
 }
 
 /* Search Card */
 .sm-search-card {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 1.75rem 2rem;
-    backdrop-filter: blur(10px);
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.sm-search-title {
+.sm-card-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #f1f5f9;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+    color: #2563eb;
 }
 
-.sm-search-title svg {
-    color: #06b6d4;
+.sm-card-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
 }
 
 .sm-search-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .sm-form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .sm-form-group label {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
     color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -70,66 +70,68 @@
 
 .sm-form-group select,
 .sm-form-group input {
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(6, 182, 212, 0.15);
-    border-radius: 10px;
-    color: #e2e8f0;
-    padding: 0.65rem 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #0f172a;
+    padding: 0.6rem 0.875rem;
     font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s, box-shadow 0.15s;
     font-family: inherit;
     width: 100%;
 }
 
 .sm-form-group select:focus,
 .sm-form-group input:focus {
-    border-color: rgba(6, 182, 212, 0.4);
-    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.08);
-}
-
-.sm-form-group select option {
-    background: #1e293b;
-    color: #e2e8f0;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    background: white;
 }
 
 .sm-form-group input::placeholder {
-    color: #334155;
+    color: #94a3b8;
 }
 
 .sm-search-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.7rem 2rem;
-    background: linear-gradient(135deg, #06b6d4, #10b981);
+    padding: 0.65rem 1.75rem;
+    background: #2563eb;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     color: white;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+    transition: all 0.15s;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 .sm-search-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 0 24px rgba(6, 182, 212, 0.4);
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-/* Results */
+/* Results Card */
 .sm-results-card {
-    background: rgba(30, 41, 59, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .sm-results-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 0.875rem;
+    padding: 0.875rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
+}
+
+.sm-results-count {
+    font-size: 0.85rem;
     color: #64748b;
     font-weight: 600;
 }
@@ -137,161 +139,146 @@
 .sm-no-results {
     padding: 3rem;
     text-align: center;
-    color: #475569;
+    color: #94a3b8;
 }
 
-.sm-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-    padding: 1.5rem;
-}
-
-.sm-student-card {
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 1.25rem;
+/* Student Row List */
+.sm-student-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    transition: border-color 0.2s;
 }
 
-.sm-student-card:hover {
-    border-color: rgba(6, 182, 212, 0.2);
-    box-shadow: 0 4px 20px rgba(6, 182, 212, 0.08);
-}
-
-.sm-student-header {
+.sm-student-row {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.12s;
+    flex-wrap: wrap;
 }
 
-.sm-avatar {
+.sm-student-row:last-child {
+    border-bottom: none;
+}
+
+.sm-student-row:hover {
+    background: #f8fafc;
+}
+
+.sm-student-thumb {
     width: 42px;
     height: 42px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #06b6d4, #10b981);
+    background: #2563eb;
     color: white;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
     flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
-.sm-student-name {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #f1f5f9;
-}
-
-.sm-student-roll {
-    font-size: 0.78rem;
-    color: #64748b;
-    margin-top: 0.15rem;
-}
-
-.sm-metrics {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.sm-metric {
+.sm-student-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 8px;
-    padding: 0.6rem;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    min-width: 0;
 }
 
-.sm-metric svg {
-    color: #06b6d4;
-}
-
-.sm-metric-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #475569;
+.sm-sname {
     font-weight: 600;
+    font-size: 0.95rem;
+    color: #0f172a;
 }
 
-.sm-metric-value {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #f1f5f9;
-}
-
-.sm-student-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.sm-status {
-    padding: 0.2rem 0.65rem;
-    border-radius: 5px;
+.sm-sroll {
     font-size: 0.78rem;
+    color: #94a3b8;
+    margin-top: 0.1rem;
+}
+
+.sm-student-stats {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.sm-stat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+}
+
+.sm-stat-chip svg {
+    color: #2563eb;
+}
+
+.sm-student-mid {}
+
+.sm-badge {
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
 .sm-status-green {
-    background: rgba(16, 185, 129, 0.12);
-    color: #10b981;
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
 }
 
 .sm-status-yellow {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
+    background: #fefce8;
+    color: #ca8a04;
+    border: 1px solid #fef08a;
 }
 
 .sm-status-red {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
+    background: #fff5f5;
+    color: #dc2626;
+    border: 1px solid #fecaca;
 }
+
+.sm-row-actions {}
 
 .sm-view-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.3rem 0.75rem;
-    background: rgba(6, 182, 212, 0.08);
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    padding: 0.4rem 0.875rem;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
     border-radius: 7px;
-    color: #06b6d4;
-    font-size: 0.8rem;
+    color: #2563eb;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    font-family: inherit;
 }
 
 .sm-view-btn:hover {
-    background: rgba(6, 182, 212, 0.15);
+    background: #dbeafe;
+    border-color: #93c5fd;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
     .sm-search-grid {
         grid-template-columns: 1fr;
     }
 
-    .sm-cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 640px) {
-    .sm-cards-grid {
-        grid-template-columns: 1fr;
+    .sm-student-row {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

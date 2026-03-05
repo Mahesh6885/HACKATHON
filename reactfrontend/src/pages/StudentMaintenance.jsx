@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, UserCheck, BookOpen, Award, Eye } from 'lucide-react';
+import { Search, UserCheck, BookOpen, Award, Eye, Filter } from 'lucide-react';
 import './StudentMaintenance.css';
 
 const ALL_STUDENTS = [
@@ -26,7 +26,10 @@ export default function StudentMaintenance() {
         let filtered = ALL_STUDENTS;
         if (selectedYear) filtered = filtered.filter(s => s.year === selectedYear);
         if (selectedDept) filtered = filtered.filter(s => s.dept === selectedDept);
-        if (rollQuery) filtered = filtered.filter(s => s.roll.toLowerCase().includes(rollQuery.toLowerCase()) || s.name.toLowerCase().includes(rollQuery.toLowerCase()));
+        if (rollQuery) filtered = filtered.filter(s =>
+            s.roll.toLowerCase().includes(rollQuery.toLowerCase()) ||
+            s.name.toLowerCase().includes(rollQuery.toLowerCase())
+        );
         setResults(filtered);
         setSearched(true);
     };
@@ -37,16 +40,21 @@ export default function StudentMaintenance() {
         return 'sm-status-red';
     };
 
+    const getInitials = (name) => name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
     return (
         <div className="student-maintenance">
             <div className="sm-header">
                 <h1 className="sm-title">Student Maintenance</h1>
-                <p className="sm-sub">Search and manage individual student records by Year, Department, and Roll Number.</p>
+                <p className="sm-sub">Look up and manage individual student records by Year, Department, and Roll Number.</p>
             </div>
 
             {/* Search Card */}
             <div className="sm-search-card">
-                <h3 className="sm-search-title"><Search size={18} /> Lookup Student</h3>
+                <div className="sm-card-header">
+                    <Filter size={18} />
+                    <h3>Filter Students</h3>
+                </div>
                 <div className="sm-search-grid">
                     <div className="sm-form-group">
                         <label>Year of Study</label>
@@ -75,62 +83,42 @@ export default function StudentMaintenance() {
                             placeholder="e.g. CSE-101 or Alice"
                             value={rollQuery}
                             onChange={e => setRollQuery(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleSearch()}
                         />
                     </div>
                 </div>
                 <button className="sm-search-btn" onClick={handleSearch}>
-                    <Search size={16} /> Fetch Student Data
+                    <Search size={15} /> Fetch Students
                 </button>
             </div>
 
             {/* Results */}
             {searched && (
-                <div className="sm-results-card animate-fade-in">
+                <div className="sm-results-card">
                     <div className="sm-results-header">
-                        <span>{results.length} student{results.length !== 1 ? 's' : ''} found</span>
+                        <span className="sm-results-count">{results.length} student{results.length !== 1 ? 's' : ''} found</span>
                     </div>
                     {results.length === 0 ? (
                         <p className="sm-no-results">No students match the selected criteria.</p>
                     ) : (
-                        <div className="sm-cards-grid">
+                        <div className="sm-student-list">
                             {results.map(student => (
-                                <div key={student.id} className="sm-student-card">
-                                    <div className="sm-student-header">
-                                        <div className="sm-avatar">
-                                            {student.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                        </div>
-                                        <div className="sm-student-info">
-                                            <div className="sm-student-name">{student.name}</div>
-                                            <div className="sm-student-roll">{student.roll} • {student.dept} • {student.year}</div>
-                                        </div>
+                                <div key={student.id} className="sm-student-row">
+                                    <div className="sm-student-thumb">{getInitials(student.name)}</div>
+                                    <div className="sm-student-info">
+                                        <span className="sm-sname">{student.name}</span>
+                                        <span className="sm-sroll">{student.roll} · {student.dept} · {student.year} Year · CGPA {student.cgpa}</span>
                                     </div>
-
-                                    <div className="sm-metrics">
-                                        <div className="sm-metric">
-                                            <BookOpen size={14} />
-                                            <span className="sm-metric-label">Test</span>
-                                            <span className="sm-metric-value">{student.testScore}%</span>
-                                        </div>
-                                        <div className="sm-metric">
-                                            <Award size={14} />
-                                            <span className="sm-metric-label">Resume</span>
-                                            <span className="sm-metric-value">{student.resumeScore}%</span>
-                                        </div>
-                                        <div className="sm-metric">
-                                            <UserCheck size={14} />
-                                            <span className="sm-metric-label">Mocks</span>
-                                            <span className="sm-metric-value">{student.mockInterviews}</span>
-                                        </div>
+                                    <div className="sm-student-stats">
+                                        <div className="sm-stat-chip"><BookOpen size={12} /> Test: {student.testScore}%</div>
+                                        <div className="sm-stat-chip"><Award size={12} /> Resume: {student.resumeScore}%</div>
+                                        <div className="sm-stat-chip"><UserCheck size={12} /> Mocks: {student.mockInterviews}</div>
                                     </div>
-
-                                    <div className="sm-student-footer">
-                                        <span className={`sm-status ${getStatusClass(student.interviewStatus)}`}>
-                                            {student.interviewStatus}
-                                        </span>
-                                        <button
-                                            className="sm-view-btn"
-                                            onClick={() => navigate(`/admin/students/${student.id}`)}
-                                        >
+                                    <div className="sm-student-mid">
+                                        <span className={`sm-badge ${getStatusClass(student.interviewStatus)}`}>{student.interviewStatus}</span>
+                                    </div>
+                                    <div className="sm-row-actions">
+                                        <button className="sm-view-btn" onClick={() => navigate(`/admin/students/${student.id}`)}>
                                             <Eye size={14} /> View Profile
                                         </button>
                                     </div>
