@@ -7,161 +7,176 @@ import {
     Award,
     MessageSquare,
     ArrowRight,
-    MoreHorizontal
+    MoreHorizontal,
+    Star,
+    Zap
 } from 'lucide-react';
-import { PieChart, Pie, Cell } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import './Dashboard.css';
 
 export default function Dashboard() {
     const readinessScore = 68;
     const pieData = [
         { name: 'Score', value: readinessScore },
-        { name: 'Remaining', value: 100 - readinessScore, fill: 'var(--border)' }
+        { name: 'Remaining', value: 100 - readinessScore }
     ];
 
-    const COLORS = ['var(--primary)', 'var(--bg-primary)'];
+    const COLORS = ['#FFFFFF', 'rgba(255, 255, 255, 0.2)'];
 
     const tasks = [
-        { id: 1, title: 'Update resume project section', category: 'Resume', status: 'pending' },
-        { id: 2, title: 'Take aptitude test weekly', category: 'Tests', status: 'pending' },
-        { id: 3, title: 'Complete AWS Cloud Practitioner', category: 'Certifications', status: 'in-progress' },
-        { id: 4, title: 'Attend 2 mock interviews', category: 'Interviews', status: 'pending' }
+        { id: 1, title: 'Update resume project section', category: 'Resume', status: 'pending', priority: 'High' },
+        { id: 2, title: 'Take aptitude test weekly', category: 'Tests', status: 'pending', priority: 'Medium' },
+        { id: 3, title: 'Complete AWS Cloud Practitioner', category: 'Certifications', status: 'in-progress', priority: 'High' },
+        { id: 4, title: 'Attend 2 mock interviews', category: 'Interviews', status: 'pending', priority: 'Low' }
+    ];
+
+    const quickStats = [
+        { label: 'Completed Tests', value: '12', icon: Zap, color: 'text-indigo-600' },
+        { label: 'Avg. Percentile', value: '84%', icon: TrendingUp, color: 'text-emerald-600' },
+        { label: 'Certifications', value: '3', icon: Award, color: 'text-amber-600' }
     ];
 
     return (
-        <div>
-            <div className="page-header">
-                <h1 className="page-title">Overview</h1>
-                <p className="page-subtitle">Welcome back, John! Here's your current placement readiness status.</p>
+        <div className="dashboard-wrapper">
+            {/* Header with Personalized Greeting */}
+            <div className="page-header decorative">
+                <div className="header-greeting">
+                    <h1 className="page-title">Good morning, John! ✨</h1>
+                    <p className="page-subtitle">You're in the top 15% of your batch. Keep up the great work!</p>
+                </div>
+                <div className="header-badges">
+                    <div className="status-badge pulse">
+                        <Star size={14} fill="currentColor" />
+                        Beta Member
+                    </div>
+                </div>
             </div>
 
             <div className="dashboard-grid">
-
-                {/* Overall Score Card */}
-                <div className="score-card">
-                    <div className="score-content">
-                        <h2 className="score-greeting">You're doing great! 🚀</h2>
-                        <div className="score-status status-improving">
+                {/* Hero Overall Score Card */}
+                <div className="hero-score-card animate-slide-up">
+                    <div className="hero-content">
+                        <div className="hero-status status-improving">
                             <TrendingUp size={16} />
-                            Improving
+                            Ready for Placement
                         </div>
+                        <h2 className="hero-greeting">Placement Readiness Index</h2>
+                        <p className="hero-desc">Your overall probability of getting placed in Tier-1 companies based on current scores.</p>
 
-                        <div className="score-details">
-                            <div className="detail-item">
-                                <span className="detail-label">Top Gap Area</span>
-                                <span className="detail-value">Aptitude Tests</span>
+                        <div className="hero-details">
+                            <div className="hero-detail-item">
+                                <span className="h-label">Focus Area</span>
+                                <span className="h-value">Logical Reasoning</span>
                             </div>
-                            <div className="detail-item">
-                                <span className="detail-label">Completed Modules</span>
-                                <span className="detail-value">2/4</span>
+                            <div className="hero-detail-divider"></div>
+                            <div className="hero-detail-item">
+                                <span className="h-label">Daily Goal</span>
+                                <span className="h-value">1 Mock Test</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="score-circle-container">
-                        <PieChart width={160} height={160}>
-                            <Pie
-                                data={pieData}
-                                cx={80}
-                                cy={80}
-                                innerRadius={60}
-                                outerRadius={80}
-                                startAngle={90}
-                                endAngle={-270}
-                                dataKey="value"
-                                stroke="none"
-                            >
-                                {pieData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                        </PieChart>
-                        <div className="score-number">
-                            {readinessScore}<span>%</span>
+                    <div className="hero-viz">
+                        <div className="viz-wrapper">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={pieData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius="75%"
+                                        outerRadius="95%"
+                                        startAngle={90}
+                                        endAngle={-270}
+                                        dataKey="value"
+                                        stroke="none"
+                                        paddingAngle={0}
+                                    >
+                                        {pieData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
+                            <div className="viz-number">
+                                {readinessScore}<span>%</span>
+                            </div>
                         </div>
                     </div>
+
+                    {/* Decorative Blobs */}
+                    <div className="hero-blob b1"></div>
+                    <div className="hero-blob b2"></div>
                 </div>
 
-                {/* Action Plan Tasks */}
-                <div className="tasks-card">
-                    <div className="card-header">
-                        <h3 className="card-title">
-                            <Target size={18} color="var(--primary)" />
-                            Next Actions
+                {/* Next Actions Side Panel */}
+                <div className="tasks-panel animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                    <div className="panel-header">
+                        <h3 className="panel-title">
+                            <Target size={18} className="text-primary" />
+                            Accelerated Action Plan
                         </h3>
-                        <button className="icon-button"><MoreHorizontal size={18} /></button>
+                        <button className="icon-btn-minimal"><MoreHorizontal size={18} /></button>
                     </div>
 
-                    <div className="task-list">
+                    <div className="task-scroll">
                         {tasks.map(task => (
-                            <div key={task.id} className="task-item">
-                                <div className="task-checkbox">
-                                    {/* Empty checkbox simulating unchecked status */}
-                                </div>
-                                <div className="task-content">
-                                    <div className="task-title">{task.title}</div>
-                                    <div className="task-meta">
-                                        <span className={`badge ${task.status === 'in-progress' ? 'badge-warning' : ''}`} style={task.status === 'pending' ? { background: 'var(--bg-primary)', padding: 0 } : {}}>
-                                            {task.category}
-                                        </span>
+                            <div key={task.id} className="task-row">
+                                <div className={`priority-indicator ${task.priority.toLowerCase()}`}></div>
+                                <div className="task-info">
+                                    <div className="task-text">{task.title}</div>
+                                    <div className="task-sub">
+                                        <span className="task-tag">{task.category}</span>
+                                        <span className="dot"></span>
+                                        <span className="task-due">{task.priority} Priority</span>
                                     </div>
                                 </div>
+                                <button className="task-check">
+                                    <ArrowRight size={16} />
+                                </button>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Modules Quick Access */}
-                <div className="modules-grid">
+                {/* Secondary Row - Stats & Modules */}
+                <div className="stats-row animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                    <div className="stats-grid-mini">
+                        {quickStats.map((stat, i) => (
+                            <div key={i} className="mini-stat-card">
+                                <div className="mini-icon">
+                                    <stat.icon size={20} className={stat.color} />
+                                </div>
+                                <div className="mini-content">
+                                    <div className="mini-value">{stat.value}</div>
+                                    <div className="mini-label">{stat.label}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
 
-                    <Link to="/resume" className="module-card">
-                        <div className="module-icon-bg bg-indigo">
-                            <FileText size={24} />
-                        </div>
-                        <h3 className="module-title">Resume Quality</h3>
-                        <p className="module-desc">ATS score and feedback based on industry standards.</p>
-                        <div className="module-footer">
-                            <span className="module-stat">Score: 75/100</span>
-                            <span className="module-link">Review <ArrowRight size={14} /></span>
-                        </div>
-                    </Link>
-
-                    <Link to="/tests" className="module-card">
-                        <div className="module-icon-bg bg-pink">
-                            <BarChart2 size={24} />
-                        </div>
-                        <h3 className="module-title">Test Scores</h3>
-                        <p className="module-desc">Aptitude, coding, and domain assessments.</p>
-                        <div className="module-footer">
-                            <span className="module-stat">Avg: 62%</span>
-                            <span className="module-link">View Trend <ArrowRight size={14} /></span>
-                        </div>
-                    </Link>
-
-                    <Link to="/certifications" className="module-card">
-                        <div className="module-icon-bg bg-emerald">
-                            <Award size={24} />
-                        </div>
-                        <h3 className="module-title">Certifications</h3>
-                        <p className="module-desc">Track earned badges and completed courses.</p>
-                        <div className="module-footer">
-                            <span className="module-stat">2 Earned</span>
-                            <span className="module-link">Add New <ArrowRight size={14} /></span>
-                        </div>
-                    </Link>
-
-                    <Link to="/interviews" className="module-card">
-                        <div className="module-icon-bg bg-amber">
-                            <MessageSquare size={24} />
-                        </div>
-                        <h3 className="module-title">Interviews</h3>
-                        <p className="module-desc">Mock interview feedback and communication ratings.</p>
-                        <div className="module-footer">
-                            <span className="module-stat">1 Mock Done</span>
-                            <span className="module-link">See Notes <ArrowRight size={14} /></span>
-                        </div>
-                    </Link>
-
+                    <div className="modules-compact-grid">
+                        <Link to="/resume" className="compact-module m-indigo">
+                            <FileText size={20} />
+                            <span>Resume</span>
+                            <ArrowRight size={14} className="m-arrow" />
+                        </Link>
+                        <Link to="/tests" className="compact-module m-emerald">
+                            <BarChart2 size={20} />
+                            <span>Tests</span>
+                            <ArrowRight size={14} className="m-arrow" />
+                        </Link>
+                        <Link to="/certifications" className="compact-module m-amber">
+                            <Award size={20} />
+                            <span>Skills</span>
+                            <ArrowRight size={14} className="m-arrow" />
+                        </Link>
+                        <Link to="/interviews" className="compact-module m-pink">
+                            <MessageSquare size={20} />
+                            <span>Mocks</span>
+                            <ArrowRight size={14} className="m-arrow" />
+                        </Link>
+                    </div>
                 </div>
 
             </div>
