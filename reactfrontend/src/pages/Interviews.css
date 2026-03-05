@@ -1,0 +1,195 @@
+.interviews-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Feedback Form Section */
+.feedback-form-section {
+    grid-column: span 5;
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.form-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.form-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.rating-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.rating-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.rating-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.rating-value {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 999px;
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px var(--primary-light);
+    transition: transform 0.1s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.note-input {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+    margin-bottom: 1.5rem;
+}
+
+/* History Display */
+.history-section {
+    grid-column: span 7;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.interview-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.company-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.interviewer-name {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+
+.date-badge {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border-radius: 999px;
+}
+
+.scores-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.score-pill {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+}
+
+.pill-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+}
+
+.pill-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.feedback-box {
+    background: linear-gradient(to right, var(--primary-light), transparent);
+    border-left: 3px solid var(--primary);
+    padding: 1rem;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.feedback-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+@media (max-width: 1024px) {
+    .feedback-form-section {
+        grid-column: span 12;
+    }
+
+    .history-section {
+        grid-column: span 12;
+    }
+}
+
+@media (max-width: 640px) {
+    .scores-row {
+        flex-direction: column;
+    }
+}
