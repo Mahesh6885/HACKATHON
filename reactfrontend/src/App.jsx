@@ -10,6 +10,8 @@ import Interviews from './pages/Interviews';
 import AdminDashboard from './pages/AdminDashboard';
 import StudentMaintenance from './pages/StudentMaintenance';
 import StudentProfile from './pages/StudentProfile';
+import Roadmap from './pages/Roadmap';
+import Settings from './pages/Settings';
 import './App.css';
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
           <Route path="/tests" element={<Tests />} />
           <Route path="/certifications" element={<Certifications />} />
           <Route path="/interviews" element={<Interviews />} />
+          <Route path="/roadmap" element={<Roadmap />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
 
         {/* Admin Routes — Dark Glass Theme */}

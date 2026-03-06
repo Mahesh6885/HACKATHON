@@ -1,304 +1,473 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
-    Cpu, Database, Zap, Settings, GraduationCap,
-    ChevronRight, Home, Eye, Trash2, Pencil, FileSpreadsheet,
-    Plus, X, Save, Users
+    ChevronRight, ChevronDown, Building2, Calendar, Users,
+    Trash2, Key, Loader2, AlertTriangle, X, Check, Eye, EyeOff, Plus
 } from 'lucide-react';
 import './StudentMaintenance.css';
 
-/* ---- Data ---- */
-const DEPARTMENTS = [
-    { id: 'CSE', label: 'Computer Science', icon: Cpu, color: '#eff6ff', iconBg: '#2563eb', border: '#bfdbfe', count: 42 },
-    { id: 'IT', label: 'Information Technology', icon: Database, color: '#f0fdf4', iconBg: '#16a34a', border: '#bbf7d0', count: 38 },
-    { id: 'ECE', label: 'Electronics & Comm.', icon: Zap, color: '#fefce8', iconBg: '#ca8a04', border: '#fef08a', count: 35 },
-    { id: 'MECH', label: 'Mechanical Engg.', icon: Settings, color: '#fef2f2', iconBg: '#dc2626', border: '#fecaca', count: 28 },
-    { id: 'CIVIL', label: 'Civil Engineering', icon: GraduationCap, color: '#faf5ff', iconBg: '#7c3aed', border: '#e9d5ff', count: 22 },
-];
+const API = 'http://localhost:8000';
 
-const YEARS = [
-    { id: '1', label: '1st Year', sub: 'First Year Students', icon: '①' },
-    { id: '2', label: '2nd Year', sub: 'Second Year Students', icon: '②' },
-    { id: '3', label: '3rd Year', sub: 'Pre-Final Year', icon: '③' },
-    { id: '4', label: '4th Year', sub: 'Final Year Students', icon: '④' },
-];
+/* ─────────── Confirm Delete Dialog ─────────── */
+function ConfirmDialog({ message, onConfirm, onCancel }) {
+    return (
+        <div className="sm-modal-backdrop">
+            <div className="sm-modal-box sm-confirm-box">
+                <AlertTriangle size={42} style={{ color: '#ef4444', marginBottom: '1.25rem' }} />
+                <p style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                    Are you sure?
+                </p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem', textAlign: 'center', lineHeight: 1.5 }}>
+                    {message}
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
+                    <button className="sm-btn sm-btn-ghost" style={{ flex: 1, justifyContent: 'center' }} onClick={onCancel}>Cancel</button>
+                    <button className="sm-btn sm-btn-danger" style={{ flex: 1, justifyContent: 'center' }} onClick={onConfirm}>Delete</button>
+                </div>
+            </div>
+        </div>
+    );
+}
 
-const MOCK_STUDENTS = {
-    'CSE-1': [{ id: 'c1', roll: 'CSE-001', name: 'Alice Smith', email: 'alice@uni.edu', cgpa: 9.1, status: 'Completed' }],
-    'CSE-2': [{ id: 'c2', roll: 'CSE-002', name: 'Charlie Davis', email: 'charlie@uni.edu', cgpa: 7.8, status: 'Pending' }],
-    'CSE-3': [{ id: 'c3', roll: 'CSE-003', name: 'Hannah Rao', email: 'hannah@uni.edu', cgpa: 8.2, status: 'Pending' }],
-    'CSE-4': [{ id: 'c4', roll: 'CSE-004', name: 'Eve Thomas', email: 'eve@uni.edu', cgpa: 9.4, status: 'Completed' }],
-    'IT-1': [{ id: 'i1', roll: 'IT-001', name: 'Diana Clark', email: 'diana@uni.edu', cgpa: 9.6, status: 'Completed' }],
-    'IT-2': [{ id: 'i2', roll: 'IT-002', name: 'Fatima Sheikh', email: 'fatima@uni.edu', cgpa: 8.8, status: 'Completed' }],
-    'ECE-1': [{ id: 'e1', roll: 'ECE-001', name: 'Bob Johnson', email: 'bob@uni.edu', cgpa: 7.4, status: 'Pending' }],
-    'ECE-2': [{ id: 'e2', roll: 'ECE-002', name: 'George Nair', email: 'george@uni.edu', cgpa: 7.9, status: 'Pending' }],
-    'MECH-1': [{ id: 'm1', roll: 'MECH-001', name: 'Ethan Lewis', email: 'ethan@uni.edu', cgpa: 7.0, status: 'Not Started' }],
-};
+/* ─────────── Edit Credentials Modal ─────────── */
+function EditModal({ student, onSave, onClose }) {
+    const [form, setForm] = useState({ username: student.roll, email: student.email, name: student.name, password: '' });
+    const [showPwd, setShowPwd] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [success, setSuccess] = useState('');
 
-const DEFAULT_STUDENTS = [
-    { id: 'def1', roll: 'STU-001', name: 'Student One', email: 'stu1@uni.edu', cgpa: 7.5, status: 'Not Started' },
-    { id: 'def2', roll: 'STU-002', name: 'Student Two', email: 'stu2@uni.edu', cgpa: 8.1, status: 'Pending' },
-];
+    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-export default function StudentMaintenance() {
-    const navigate = useNavigate();
-
-    // Navigation state: 'dept' | 'year' | 'students'
-    const [view, setView] = useState('dept');
-    const [dept, setDept] = useState(null);
-    const [year, setYear] = useState(null);
-
-    // Student list state
-    const key = dept && year ? `${dept}-${year}` : null;
-    const [studentMap, setStudentMap] = useState(MOCK_STUDENTS);
-
-    // Modal state for Add/Edit
-    const [showModal, setShowModal] = useState(false);
-    const [editStudent, setEditStudent] = useState(null);
-    const [form, setForm] = useState({ name: '', roll: '', email: '', cgpa: '', status: 'Not Started' });
-
-    const students = key ? (studentMap[key] || DEFAULT_STUDENTS) : [];
-    const deptObj = DEPARTMENTS.find(d => d.id === dept);
-
-    /* ----- Navigation helpers ----- */
-    const selectDept = (d) => { setDept(d.id); setYear(null); setView('year'); };
-    const selectYear = (y) => { setYear(y.id); setView('students'); };
-    const goBack = () => {
-        if (view === 'students') setView('year');
-        else if (view === 'year') setView('dept');
+    const handleSave = async () => {
+        setSaving(true);
+        setErrors({});
+        setSuccess('');
+        try {
+            const res = await fetch(`${API}/api/admin/student/${student.id}/credentials/`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: form.username, email: form.email, name: form.name, password: form.password || undefined }),
+            });
+            const data = await res.json();
+            if (!res.ok) { setErrors(data.errors || { general: data.error }); }
+            else { setSuccess('Credentials updated!'); onSave(student.id, data); }
+        } catch { setErrors({ general: 'Network error.' }); }
+        finally { setSaving(false); }
     };
 
-    /* ----- CRUD ----- */
-    const deleteStudent = (sid) => {
-        setStudentMap(prev => ({
+    return (
+        <div className="sm-modal-backdrop">
+            <div className="sm-modal-box">
+                <div className="sm-modal-header">
+                    <h2 className="sm-modal-title">Edit Student Credentials</h2>
+                    <button className="sm-icon-btn" onClick={onClose}><X size={20} /></button>
+                </div>
+                <div className="sm-form-body">
+                    <label className="sm-label">Roll Number (Username)</label>
+                    <input className="sm-input" name="username" value={form.username} onChange={handleChange} placeholder="e.g. 21CS001" />
+                    {errors.username && <p className="sm-error">{errors.username}</p>}
+
+                    <label className="sm-label">Full Name</label>
+                    <input className="sm-input" name="name" value={form.name} onChange={handleChange} placeholder="Student Name" />
+
+                    <label className="sm-label">Email</label>
+                    <input className="sm-input" name="email" type="email" value={form.email} onChange={handleChange} placeholder="student@example.com" />
+                    {errors.email && <p className="sm-error">{errors.email}</p>}
+
+                    <label className="sm-label">New Password <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(leave blank to keep current)</span></label>
+                    <div style={{ position: 'relative' }}>
+                        <input className="sm-input" name="password" type={showPwd ? 'text' : 'password'} value={form.password} onChange={handleChange} placeholder="Min 6 characters" style={{ paddingRight: '2.5rem' }} />
+                        <button onClick={() => setShowPwd(!showPwd)} style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                            {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                    </div>
+                    {errors.password && <p className="sm-error">{errors.password}</p>}
+
+                    {errors.general && <p className="sm-error" style={{ marginTop: '0.5rem' }}>{errors.general}</p>}
+                    {success && <p style={{ color: 'var(--success)', fontSize: '0.85rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Check size={14} /> {success}</p>}
+
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                        <button className="sm-btn sm-btn-primary" onClick={handleSave} disabled={saving} style={{ flex: 1, justifyContent: 'center' }}>
+                            {saving ? <Loader2 className="animate-spin" size={16} /> : <Key size={16} />}
+                            {saving ? 'Saving...' : 'Save Changes'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* ─────────── Student Row ─────────── */
+function StudentRow({ student, onDelete, onEdit }) {
+    return (
+        <tr className="sm-student-row">
+            <td>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div className="sm-avatar">{(student.name[0] || '?').toUpperCase()}</div>
+                    <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{student.name}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{student.roll}</div>
+                    </div>
+                </div>
+            </td>
+            <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{student.email}</td>
+            <td>
+                <span className={`sm-score-pill ${student.readiness >= 80 ? 'high' : student.readiness >= 60 ? 'med' : 'low'}`}>
+                    {student.readiness}%
+                </span>
+            </td>
+            <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{student.last_active}</td>
+            <td>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <button className="sm-icon-btn sm-edit-btn" onClick={() => onEdit(student)} title="Edit credentials">
+                        <Key size={18} /> Edit
+                    </button>
+                    <button className="sm-icon-btn sm-delete-btn" onClick={() => onDelete(student)} title="Delete student">
+                        <Trash2 size={18} /> Delete
+                    </button>
+                </div>
+            </td>
+        </tr>
+    );
+}
+
+/* ─────────── Main StudentMaintenance Page ─────────── */
+export default function StudentMaintenance() {
+    // Data State
+    const [tree, setTree] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false);
+
+    // Drill-down State Machine
+    // views: 'DEPARTMENTS' -> 'YEARS' -> 'STUDENTS'
+    const [view, setView] = useState('DEPARTMENTS');
+    const [activeDept, setActiveDept] = useState(null);
+    const [activeYear, setActiveYear] = useState(null);
+
+    // Global Actions States
+    const [confirmState, setConfirmState] = useState(null); // { type, id, name, msg }
+    const [editStudent, setEditStudent] = useState(null);
+
+    const loadTree = () => {
+        setIsLoading(true);
+        setFetchError(false);
+        fetch(`${API}/api/admin/tree/`)
+            .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+            .then(data => {
+                setTree(data);
+                // Synchronize active references in case of updates
+                if (activeDept) setActiveDept(data.find(d => d.id === activeDept.id) || null);
+                if (activeYear) {
+                    const matchedDept = data.find(d => d.id === activeDept.id);
+                    if (matchedDept) setActiveYear(matchedDept.years.find(y => y.id === activeYear.id) || null);
+                }
+            })
+            .catch(() => setFetchError(true))
+            .finally(() => setIsLoading(false));
+    };
+
+    useEffect(() => { loadTree(); }, []);
+
+    // Handle back logic
+    useEffect(() => {
+        if (view === 'DEPARTMENTS') {
+            setActiveDept(null);
+            setActiveYear(null);
+        } else if (view === 'YEARS') {
+            setActiveYear(null);
+            if (!activeDept) setView('DEPARTMENTS');
+        } else if (view === 'STUDENTS') {
+            if (!activeYear || !activeDept) setView('DEPARTMENTS');
+        }
+    }, [view, activeDept, activeYear]);
+
+    /* ── Delete Handlers ── */
+    const askDelete = (type, id, name) => {
+        const msgs = {
+            dept: `This will permanently delete the entire "${name}" department including ALL years and students.`,
+            year: `This will permanently delete "${name}" and ALL students enrolled in it.`,
+            student: `This will permanently delete student "${name}". Their resumes and data will go away.`,
+        };
+        setConfirmState({ type, id, name, msg: msgs[type] });
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!confirmState) return;
+        const { type, id } = confirmState;
+
+        // Optimistically navigate down if a parent item is deleted
+        if (type === 'dept' && activeDept?.id === id) setView('DEPARTMENTS');
+        if (type === 'year' && activeYear?.id === id) setView('YEARS');
+
+        const endpoints = {
+            dept: `${API}/api/admin/department/${id}/delete/`,
+            year: `${API}/api/admin/year/${id}/delete/`,
+            student: `${API}/api/admin/student/${id}/delete/`,
+        };
+        try {
+            const res = await fetch(endpoints[type], { method: 'DELETE' });
+            if (res.ok) { setConfirmState(null); loadTree(); }
+        } catch { }
+    };
+
+    /* ── Add Handlers ── */
+    const [addModal, setAddModal] = useState(null); // 'dept' | 'year' | null
+    const [addInput, setAddInput] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleAddSubmit = async () => {
+        if (!addInput.trim() || !addModal) return;
+        setIsSaving(true);
+        try {
+            if (addModal === 'dept') {
+                const res = await fetch(`${API}/api/admin/department/create/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: addInput.trim() })
+                });
+                if (res.ok) { setAddModal(null); setAddInput(''); loadTree(); }
+            } else if (addModal === 'year' && activeDept) {
+                const res = await fetch(`${API}/api/admin/year/create/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ year_name: addInput.trim(), department_id: activeDept.id })
+                });
+                if (res.ok) { setAddModal(null); setAddInput(''); loadTree(); }
+            }
+        } catch (e) {
+            console.error("Add failed", e);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    // Update locally so we don't have to wait for network on credential change
+    const handleEditSave = (userId, updatedData) => {
+        setTree(prev => prev.map(dept => ({
+            ...dept,
+            years: dept.years.map(year => ({
+                ...year,
+                students: year.students.map(s =>
+                    s.id === userId ? { ...s, roll: updatedData.roll, email: updatedData.email } : s
+                )
+            }))
+        })));
+        // also sync active objects
+        setActiveYear(prev => !prev ? null : ({
             ...prev,
-            [key]: (prev[key] || DEFAULT_STUDENTS).filter(s => s.id !== sid)
+            students: prev.students.map(s => s.id === userId ? { ...s, roll: updatedData.roll, email: updatedData.email } : s)
         }));
     };
 
-    const openAdd = () => {
-        setEditStudent(null);
-        setForm({ name: '', roll: `${dept}-${String(students.length + 1).padStart(3, '0')}`, email: '', cgpa: '', status: 'Not Started' });
-        setShowModal(true);
-    };
+    if (isLoading && tree.length === 0) return (
+        <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--text-secondary)' }}>
+            <Loader2 size={36} className="animate-spin" style={{ margin: '0 auto 1rem', color: 'var(--primary)', display: 'block' }} />
+            <p>Loading management data...</p>
+        </div>
+    );
 
-    const openEdit = (s) => {
-        setEditStudent(s);
-        setForm({ name: s.name, roll: s.roll, email: s.email, cgpa: s.cgpa, status: s.status });
-        setShowModal(true);
-    };
-
-    const saveStudent = () => {
-        if (!form.name || !form.roll) return;
-        if (editStudent) {
-            setStudentMap(prev => ({
-                ...prev,
-                [key]: (prev[key] || DEFAULT_STUDENTS).map(s => s.id === editStudent.id ? { ...s, ...form, cgpa: parseFloat(form.cgpa) || s.cgpa } : s)
-            }));
-        } else {
-            setStudentMap(prev => ({
-                ...prev,
-                [key]: [...(prev[key] || DEFAULT_STUDENTS), { ...form, id: Date.now().toString(), cgpa: parseFloat(form.cgpa) || 0 }]
-            }));
-        }
-        setShowModal(false);
-    };
-
-    const getStatusClass = (st) => {
-        if (st === 'Completed') return 'badge-green';
-        if (st === 'Pending') return 'badge-yellow';
-        return 'badge-gray';
-    };
-
-    const getInitials = (name) => name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-
-    /* ----- Breadcrumb ----- */
-    const Breadcrumb = () => (
-        <nav className="sm-breadcrumb">
-            <button onClick={() => setView('dept')} className="sm-bc-btn"><Home size={14} /> Home</button>
-            {(view === 'year' || view === 'students') && (
-                <><ChevronRight size={13} className="sm-bc-sep" /><button onClick={() => setView('year')} className={`sm-bc-btn ${view === 'year' ? 'active' : ''}`}>{dept}</button></>
-            )}
-            {view === 'students' && (
-                <><ChevronRight size={13} className="sm-bc-sep" /><span className="sm-bc-current">Year {year}</span></>
-            )}
-        </nav>
+    if (fetchError && tree.length === 0) return (
+        <div style={{ textAlign: 'center', padding: '5rem' }}>
+            <AlertTriangle size={40} style={{ color: '#ef4444', margin: '0 auto 1rem', display: 'block' }} />
+            <h2>Failed to load data</h2>
+            <button onClick={loadTree} className="sm-btn sm-btn-primary" style={{ marginTop: '1rem' }}>Retry</button>
+        </div>
     );
 
     return (
-        <div className="student-maintenance">
-            {/* Page Header */}
-            <div className="sm-page-header">
-                <div>
-                    <Breadcrumb />
-                    <h1 className="sm-title">
-                        {view === 'dept' && 'Student Maintenance'}
-                        {view === 'year' && `${deptObj?.label} — Select Year`}
-                        {view === 'students' && `${deptObj?.label} · Year ${year}`}
-                    </h1>
-                    <p className="sm-sub">
-                        {view === 'dept' && 'Select a department to manage its students.'}
-                        {view === 'year' && 'Choose the year of study to view student records.'}
-                        {view === 'students' && `${students.length} students enrolled`}
-                    </p>
-                </div>
-                {view !== 'dept' && (
-                    <button className="sm-back-btn" onClick={goBack}>← Back</button>
-                )}
-            </div>
+        <div className="sm-page">
+            {/* ── Level 1: DEPARTMENTS ── */}
+            {view === 'DEPARTMENTS' && (
+                <>
+                    <div className="sm-page-header">
+                        <div>
+                            <h1 className="sm-page-title">Select Department</h1>
+                            <p className="sm-page-sub">Choose a department to manage staff and students</p>
+                        </div>
+                        <div className="sm-global-actions">
+                            <button className="sm-btn sm-btn-purple" onClick={() => setAddModal('dept')}><Plus size={16} /> Add Department</button>
+                        </div>
+                    </div>
 
-            {/* DEPT VIEW */}
-            {view === 'dept' && (
-                <div className="sm-dept-grid">
-                    {DEPARTMENTS.map(d => {
-                        const Icon = d.icon;
-                        return (
-                            <div key={d.id} className="sm-dept-card" style={{ background: d.color, borderColor: d.border }}>
-                                <div className="sm-dept-icon-wrap" style={{ background: d.iconBg }}>
-                                    <Icon size={26} color="white" />
-                                </div>
-                                <div className="sm-dept-body">
-                                    <h3 className="sm-dept-name">{d.label}</h3>
-                                    <p className="sm-dept-sub">{d.id} Department</p>
-                                    <div className="sm-dept-meta">
-                                        <Users size={13} /> {d.count} students
+                    {tree.length === 0 ? (
+                        <div className="sm-card-body" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
+                            <Building2 size={48} style={{ margin: '0 auto 1rem', opacity: 0.3, display: 'block' }} />
+                            <p>No departments exist.</p>
+                        </div>
+                    ) : (
+                        <div className="sm-datacard-grid">
+                            {tree.map(dept => (
+                                <div key={dept.id} className="sm-datacard" onClick={() => { setActiveDept(dept); setView('YEARS'); }}>
+                                    <div className="sm-datacard-header">
+                                        <h3 className="sm-datacard-title">{dept.name}</h3>
+                                        <div className="sm-datacard-icon">🏫</div>
+                                    </div>
+                                    <div className="sm-datacard-row" style={{ marginTop: '1rem' }}>
+                                        <span className="sm-datacard-label">Academic Years</span>
+                                        <span className="sm-datacard-val1">{dept.year_count}</span>
+                                    </div>
+                                    <div className="sm-datacard-row">
+                                        <span className="sm-datacard-label">Students Enrolled</span>
+                                        <span className="sm-datacard-val2">{dept.student_count}</span>
+                                    </div>
+                                    <div style={{ marginTop: '1rem', textAlign: 'right' }}>
+                                        <button className="sm-icon-btn sm-delete-btn" onClick={(e) => { e.stopPropagation(); askDelete('dept', dept.id, dept.name); }} title="Delete Dept">
+                                            <Trash2 size={16} /> Delete
+                                        </button>
                                     </div>
                                 </div>
-                                <button className="sm-select-btn" onClick={() => selectDept(d)}>
-                                    Select <ChevronRight size={15} />
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
+
+            {/* ── Level 2: YEARS ── */}
+            {view === 'YEARS' && activeDept && (
+                <>
+                    <div className="sm-breadcrumb">
+                        <button className="sm-bc-btn" onClick={() => setView('DEPARTMENTS')}>Departments</button>
+                        <ChevronRight size={14} />
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{activeDept.name}</span>
+                    </div>
+
+                    <div className="sm-page-header">
+                        <div>
+                            <h1 className="sm-page-title">Select Academic Year</h1>
+                            <p className="sm-page-sub">Manage specific years within {activeDept.name}</p>
+                        </div>
+                        <div className="sm-global-actions">
+                            <button className="sm-btn sm-btn-purple" onClick={() => setAddModal('year')}><Plus size={16} /> Add Year</button>
+                        </div>
+                    </div>
+
+                    {activeDept.years.length === 0 ? (
+                        <div className="sm-card-body" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
+                            <Calendar size={48} style={{ margin: '0 auto 1rem', opacity: 0.3, display: 'block' }} />
+                            <p>No academic years configured.</p>
+                        </div>
+                    ) : (
+                        <div className="sm-datacard-grid">
+                            {activeDept.years.map(year => (
+                                <div key={year.id} className="sm-datacard" onClick={() => { setActiveYear(year); setView('STUDENTS'); }}>
+                                    <div className="sm-datacard-header">
+                                        <h3 className="sm-datacard-title">{year.year_name}</h3>
+                                        <div className="sm-datacard-icon">🎓</div>
+                                    </div>
+                                    <div className="sm-datacard-row" style={{ marginTop: '1rem' }}>
+                                        <span className="sm-datacard-label">Active Students</span>
+                                        <span className="sm-datacard-val2">{year.student_count}</span>
+                                    </div>
+                                    <div style={{ marginTop: '1rem', textAlign: 'right' }}>
+                                        <button className="sm-icon-btn sm-delete-btn" onClick={(e) => { e.stopPropagation(); askDelete('year', year.id, year.year_name); }} title="Delete Year">
+                                            <Trash2 size={16} /> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
+
+            {/* ── Level 3: STUDENTS ── */}
+            {view === 'STUDENTS' && activeYear && activeDept && (
+                <>
+                    <div className="sm-breadcrumb">
+                        <button className="sm-bc-btn" onClick={() => setView('DEPARTMENTS')}>Departments</button>
+                        <ChevronRight size={14} />
+                        <button className="sm-bc-btn" onClick={() => setView('YEARS')}>{activeDept.name}</button>
+                        <ChevronRight size={14} />
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{activeYear.year_name}</span>
+                    </div>
+
+                    <div className="sm-page-header">
+                        <div>
+                            <h1 className="sm-page-title">{activeYear.year_name} Students</h1>
+                            <p className="sm-page-sub">Viewing all enrolled students</p>
+                        </div>
+                        <button className="sm-btn sm-btn-primary"><Plus size={16} /> Add Student</button>
+                    </div>
+
+                    <div className="sm-student-table-container">
+                        {activeYear.students.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
+                                <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.3, display: 'block' }} />
+                                <p>No students enrolled in this year.</p>
+                            </div>
+                        ) : (
+                            <table className="sm-student-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Details</th>
+                                        <th>Email Address</th>
+                                        <th>Score</th>
+                                        <th>Last Active</th>
+                                        <th style={{ textAlign: 'right' }}>Manage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {activeYear.students.map(s => (
+                                        <StudentRow
+                                            key={s.id}
+                                            student={s}
+                                            onDelete={(sObj) => askDelete('student', sObj.id, sObj.name)}
+                                            onEdit={(sObj) => setEditStudent(sObj)}
+                                        />
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                </>
+            )}
+
+
+            {/* Modals */}
+            {confirmState && (
+                <ConfirmDialog
+                    message={confirmState.msg}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={() => setConfirmState(null)}
+                />
+            )}
+
+            {editStudent && (
+                <EditModal
+                    student={editStudent}
+                    onSave={handleEditSave}
+                    onClose={() => setEditStudent(null)}
+                />
+            )}
+
+            {addModal && (
+                <div className="sm-modal-backdrop">
+                    <div className="sm-modal-box">
+                        <div className="sm-modal-header">
+                            <h2 className="sm-modal-title">Add {addModal === 'dept' ? 'Department' : 'Academic Year'}</h2>
+                            <button className="sm-icon-btn" onClick={() => { setAddModal(null); setAddInput(''); }}><X size={20} /></button>
+                        </div>
+                        <div className="sm-form-body">
+                            <label className="sm-label">Enter Name</label>
+                            <input
+                                autoFocus
+                                className="sm-input"
+                                value={addInput}
+                                onChange={e => setAddInput(e.target.value)}
+                                placeholder={addModal === 'dept' ? 'e.g. Mechanical Engineering' : 'e.g. First Year'}
+                            />
+                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                                <button
+                                    className="sm-btn sm-btn-primary"
+                                    onClick={handleAddSubmit}
+                                    disabled={isSaving || !addInput.trim()}
+                                    style={{ flex: 1, justifyContent: 'center' }}
+                                >
+                                    {isSaving ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
+                                    {isSaving ? 'Creating...' : 'Create'}
                                 </button>
                             </div>
-                        );
-                    })}
-                </div>
-            )}
-
-            {/* YEAR VIEW */}
-            {view === 'year' && (
-                <div className="sm-year-grid">
-                    {YEARS.map(y => (
-                        <div key={y.id} className="sm-year-card" onClick={() => selectYear(y)}>
-                            <div className="sm-year-icon">{y.icon}</div>
-                            <div>
-                                <div className="sm-year-label">{y.label}</div>
-                                <div className="sm-year-sub">{y.sub}</div>
-                            </div>
-                            <ChevronRight size={20} className="sm-year-arrow" />
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* STUDENTS VIEW */}
-            {view === 'students' && (
-                <div className="sm-students-section">
-                    {/* Top Action Bar */}
-                    <div className="sm-action-bar">
-                        <div className="sm-action-bar-left">
-                            <span className="sm-count-badge"><Users size={14} /> {students.length} Students</span>
-                        </div>
-                        <div className="sm-action-bar-right">
-                            <label className="sm-import-btn">
-                                <FileSpreadsheet size={15} />
-                                Bulk Excel Import
-                                <input type="file" accept=".xlsx,.xls,.csv" style={{ display: 'none' }} onChange={() => alert('Connects to backend import API')} />
-                            </label>
-                            <button className="sm-add-btn" onClick={openAdd}>
-                                <Plus size={15} /> Add New Student
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Student Cards */}
-                    <div className="sm-student-table-card">
-                        <div className="sm-table-header">
-                            <span>Student</span>
-                            <span>Roll No.</span>
-                            <span>CGPA</span>
-                            <span>Interview Status</span>
-                            <span>Actions</span>
-                        </div>
-
-                        {students.length === 0 && (
-                            <div className="sm-empty">No students found. Add one!</div>
-                        )}
-
-                        {students.map(s => (
-                            <div key={s.id} className="sm-student-row">
-                                <div className="sm-student-cell">
-                                    <div className="sm-thumb">{getInitials(s.name)}</div>
-                                    <div>
-                                        <div className="sm-sname">{s.name}</div>
-                                        <div className="sm-semail">{s.email}</div>
-                                    </div>
-                                </div>
-                                <div className="sm-cell">
-                                    <span className="sm-roll-chip">{s.roll}</span>
-                                </div>
-                                <div className="sm-cell">
-                                    <span className="sm-cgpa">{s.cgpa}</span>
-                                </div>
-                                <div className="sm-cell">
-                                    <span className={`sm-badge ${getStatusClass(s.status)}`}>{s.status}</span>
-                                </div>
-                                <div className="sm-cell sm-row-actions">
-                                    <button className="sm-icon-btn-edit" onClick={() => openEdit(s)} title="Edit">
-                                        <Pencil size={15} />
-                                    </button>
-                                    <button className="sm-icon-btn-delete" onClick={() => deleteStudent(s.id)} title="Delete">
-                                        <Trash2 size={15} />
-                                    </button>
-                                    <button className="sm-view-btn" onClick={() => navigate(`/admin/students/${s.id}`)}>
-                                        <Eye size={14} /> View
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Add / Edit Modal */}
-            {showModal && (
-                <div className="sm-overlay" onClick={() => setShowModal(false)}>
-                    <div className="sm-modal" onClick={e => e.stopPropagation()}>
-                        <div className="sm-modal-head">
-                            <h3>{editStudent ? 'Edit Student' : 'Add New Student'}</h3>
-                            <button onClick={() => setShowModal(false)}><X size={18} /></button>
-                        </div>
-                        <div className="sm-modal-body">
-                            <div className="sm-modal-grid">
-                                {[
-                                    { label: 'Full Name*', field: 'name', placeholder: 'e.g. John Doe' },
-                                    { label: 'Roll Number*', field: 'roll', placeholder: 'e.g. CSE-101' },
-                                    { label: 'Email', field: 'email', placeholder: 'john@uni.edu', type: 'email' },
-                                    { label: 'CGPA', field: 'cgpa', placeholder: '8.5', type: 'number' },
-                                ].map(({ label, field, placeholder, type = 'text' }) => (
-                                    <div className="sm-modal-field" key={field}>
-                                        <label>{label}</label>
-                                        <input
-                                            type={type}
-                                            placeholder={placeholder}
-                                            value={form[field]}
-                                            onChange={e => setForm(p => ({ ...p, [field]: e.target.value }))}
-                                        />
-                                    </div>
-                                ))}
-                                <div className="sm-modal-field">
-                                    <label>Interview Status</label>
-                                    <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value }))}>
-                                        <option>Not Started</option>
-                                        <option>Pending</option>
-                                        <option>Completed</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="sm-modal-foot">
-                            <button className="sm-modal-cancel" onClick={() => setShowModal(false)}>Cancel</button>
-                            <button className="sm-modal-save" onClick={saveStudent}>
-                                <Save size={15} /> {editStudent ? 'Save Changes' : 'Add Student'}
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -30,7 +30,12 @@ class ResumeUploadView(APIView):
             os.remove(temp_path)
             
         # Use an admin user or a dummy user for now if authentication isn't sent
-        user = request.user if request.user.is_authenticated else None
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback to the first available user (the dummy we created)
+            from django.contrib.auth.models import User
+            user = User.objects.first()
         
         if user:
             # Save to Database
@@ -40,6 +45,17 @@ class ResumeUploadView(APIView):
                 score=ml_result['score'],
                 feedback_items=ml_result
             )
+            
+            # Create a TestScore record so it shows up in the user's history (User Request)
+            from tests_app.models import TestScore
+            TestScore.objects.create(
+                user=user,
+                test_name="Resume AI Evaluation",
+                type="DOMAIN",
+                score=ml_result['score'],
+                total=100
+            )
+
             serializer = ResumeSerializer(resume)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:

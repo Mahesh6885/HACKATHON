@@ -1,28 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart
 } from 'recharts';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCw, BarChart2 } from 'lucide-react';
 import './Tests.css';
 
 export default function Tests() {
-    const chartData = [
-        { name: 'Jan', score: 45 },
-        { name: 'Feb', score: 52 },
-        { name: 'Mar', score: 58 },
-        { name: 'Apr', score: 65 },
-        { name: 'May', score: 62 },
-        { name: 'Jun', score: 75 },
-        { name: 'Jul', score: 80 }
-    ];
+    const [testHistory, setTestHistory] = useState([]);
+    const [chartData, setChartData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const testHistory = [
-        { id: 1, name: 'Cognizant GenC Next Aptitude', score: '80/100', date: 'Jul 15, 2026', type: 'Aptitude' },
-        { id: 2, name: 'TCS Ninja Coding Round', score: '75/100', date: 'Jun 28, 2026', type: 'Coding' },
-        { id: 3, name: 'Infosys Pseudo Code', score: '62/100', date: 'May 10, 2026', type: 'Domain' },
-        { id: 4, name: 'Wipro English Comm Test', score: '85/100', date: 'Apr 22, 2026', type: 'Communication' },
-        { id: 5, name: 'Accenture Tech Assessment', score: '58/100', date: 'Mar 15, 2026', type: 'Coding' },
-    ];
+
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        fetch('http://localhost:8000/api/tests/', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    const formatted = data.map(item => ({
+                        id: item.id,
+                        name: item.test_name,
+                        score: `${item.score}/${item.total}`,
+                        date: new Date(item.taken_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                        type: item.type,
+                        rawScore: (item.score / item.total) * 100,
+                        dateObj: new Date(item.taken_at)
+                    }));
+                    setTestHistory(formatted);
+
+                    // Chart data needs to be chronological (oldest to newest)
+                    const chronological = [...formatted].sort((a, b) => a.dateObj - b.dateObj);
+                    const cData = chronological.map(item => ({
+                        name: item.date.slice(0, 6),
+                        score: Math.round(item.rawScore)
+                    }));
+
+                    // If no data, provide a flatline so chart doesn't break
+                    if (cData.length === 0) {
+                        setChartData([{ name: 'Today', score: 0 }]);
+                    } else {
+                        setChartData(cData);
+                    }
+                }
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error("Failed to fetch test scores:", err);
+                setIsLoading(false);
+            });
+    }, []);
+
+    const avgScore = testHistory.length > 0
+        ? Math.round(testHistory.reduce((acc, curr) => acc + curr.rawScore, 0) / testHistory.length)
+        : 0;
+    const highestScore = testHistory.length > 0
+        ? Math.round(Math.max(...testHistory.map(t => t.rawScore)))
+        : 0;
 
     return (
         <div>
@@ -44,7 +79,7 @@ export default function Tests() {
                         <h2 className="section-title">Performance Trend</h2>
                     </div>
 
-                    <div className="chart-wrapper">
+                    <div className="chart-wrapper" style={{ minHeight: '300px', height: '100%', position: 'relative' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <defs>
@@ -67,15 +102,15 @@ export default function Tests() {
                     <div className="stats-grid">
                         <div className="stat-box">
                             <span className="stat-label">Average Score</span>
-                            <span className="stat-value">65.2%</span>
+                            <span className="stat-value">{isLoading ? '-' : `${avgScore}%`}</span>
                         </div>
                         <div className="stat-box">
                             <span className="stat-label">Tests Taken</span>
-                            <span className="stat-value">12</span>
+                            <span className="stat-value">{isLoading ? '-' : testHistory.length}</span>
                         </div>
                         <div className="stat-box">
                             <span className="stat-label">Highest Score</span>
-                            <span className="stat-value" style={{ color: 'var(--success)' }}>85%</span>
+                            <span className="stat-value" style={{ color: 'var(--success)' }}>{isLoading ? '-' : `${highestScore}%`}</span>
                         </div>
                     </div>
                 </div>
@@ -85,18 +120,31 @@ export default function Tests() {
                     <h2 className="section-title">Recent Tests</h2>
 
                     <div className="history-list">
-                        {testHistory.map(test => (
-                            <div key={test.id} className="history-item">
-                                <div className="item-row">
-                                    <div className="test-name">{test.name}</div>
-                                    <div className="test-score">{test.score}</div>
-                                </div>
-                                <div className="item-row">
-                                    <span className="test-type">{test.type}</span>
-                                    <div className="test-date">{test.date}</div>
-                                </div>
+                        {isLoading ? (
+                            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                                <RefreshCw className="animate-spin" size={24} style={{ margin: '0 auto 1rem', color: 'var(--primary)' }} />
+                                Loading test records...
                             </div>
-                        ))}
+                        ) : testHistory.length > 0 ? (
+                            testHistory.map(test => (
+                                <div key={test.id} className="history-item">
+                                    <div className="item-row">
+                                        <div className="test-name">{test.name}</div>
+                                        <div className="test-score">{test.score}</div>
+                                    </div>
+                                    <div className="item-row">
+                                        <span className="test-type">{test.type}</span>
+                                        <div className="test-date">{test.date}</div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '3rem', backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                                <BarChart2 size={32} style={{ margin: '0 auto 1rem', color: 'var(--text-muted)' }} />
+                                <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>No Tests Taken</h3>
+                                <p style={{ color: 'var(--text-secondary)' }}>You haven't recorded any test scores yet.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 

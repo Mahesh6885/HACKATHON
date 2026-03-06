@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
     UploadCloud,
     CheckCircle,
@@ -11,15 +11,60 @@ import './Resume.css';
 
 export default function Resume() {
     const [isUploading, setIsUploading] = useState(false);
-    const [hasAnalysis, setHasAnalysis] = useState(true); // For demo, default to showing analysis
+    const [hasAnalysis, setHasAnalysis] = useState(false);
+    const [analysisResult, setAnalysisResult] = useState(null);
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const fileInputRef = useRef(null);
 
-    const handleUpload = () => {
+    const handleUploadClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const fileUrl = URL.createObjectURL(file);
+
+        setUploadedFile({
+            name: file.name,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            url: fileUrl
+        });
+
         setIsUploading(true);
         setHasAnalysis(false);
-        setTimeout(() => {
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const token = localStorage.getItem('access_token');
+            const response = await fetch('http://localhost:8000/api/resume/upload/', {
+                method: 'POST',
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+                body: formData,
+            });
+
+            if (!response.ok) {
+                console.error("Failed to upload resume");
+                // Fallback for demo purposes if backend fails
+                setAnalysisResult({
+                    score: 65,
+                    formatting: { status: 'warning', text: 'Resume could not be analyzed fully. This is dummy feedback.' }
+                });
+            } else {
+                const data = await response.json();
+                setAnalysisResult(data);
+            }
+        } catch (error) {
+            console.error("Error connecting to backend:", error);
+        } finally {
             setIsUploading(false);
             setHasAnalysis(true);
-        }, 1500);
+        }
     };
 
     return (
@@ -31,13 +76,19 @@ export default function Resume() {
 
             <div className="resume-container">
 
-                {/* Upload Section */}
                 <div className="upload-section">
                     <div className="analysis-header" style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: '1rem' }}>
                         <h2 className="card-title">Upload Resume</h2>
                     </div>
 
-                    <div className="upload-area" onClick={handleUpload}>
+                    <div className="upload-area" onClick={handleUploadClick}>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            accept=".pdf,.docx"
+                            onChange={handleFileChange}
+                        />
                         {isUploading ? (
                             <RefreshCw className="upload-icon animate-spin" size={48} />
                         ) : (
@@ -49,74 +100,74 @@ export default function Resume() {
                         <p className="upload-hint">PDF or DOCX (Max. 5MB)</p>
                     </div>
 
-                    {hasAnalysis && (
+                    {hasAnalysis && uploadedFile && (
                         <div className="flex" style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-primary)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
                             <File size={24} color="var(--primary)" />
                             <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>John_Doe_Resume_v2.pdf</div>
-                                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Uploaded today at 10:45 AM</div>
+                                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{uploadedFile.name}</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Uploaded today at {uploadedFile.time}</div>
                             </div>
-                            <button className="btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>View</button>
+                            <button className="btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => window.open(uploadedFile.url, '_blank')}>View</button>
                         </div>
                     )}
                 </div>
 
                 {/* Analysis Section */}
-                {hasAnalysis ? (
+                {hasAnalysis && analysisResult ? (
                     <div className="analysis-section animate-fade-in">
                         <div className="analysis-header">
                             <div className="analysis-score-box">
-                                <div className="score-circle">75</div>
+                                <div className="score-circle">{analysisResult.score || 0}</div>
                                 <div>
                                     <div className="score-label">Resume Score</div>
-                                    <div className="score-status-text">Needs Improvement</div>
+                                    <div className="score-status-text">
+                                        {analysisResult.score >= 80 ? "Excellent" : analysisResult.score >= 50 ? "Needs Improvement" : "Poor"}
+                                    </div>
                                 </div>
                             </div>
                             <button className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Download Report</button>
                         </div>
 
                         <div className="checklist-container">
+                            {analysisResult.feedback_items ? (
+                                Object.keys(analysisResult.feedback_items).map((key, index) => {
+                                    if (key === 'score') return null;
+                                    const item = analysisResult.feedback_items[key];
+                                    let statusClass = 'warning';
+                                    if (Array.isArray(item)) {
+                                        if (key === 'issues') statusClass = item.length === 0 ? 'success' : 'danger';
+                                        else if (key === 'keywords') statusClass = item.length >= 5 ? 'success' : 'warning';
+                                        else statusClass = item.length > 0 ? 'warning' : 'success'; // feedback
+                                    } else {
+                                        statusClass = item.status === 'success' || item.status === 'good' ? 'success' : (item.status === 'warning' ? 'warning' : 'danger');
+                                    }
 
-                            <div className="checklist-item success">
-                                <CheckCircle className="item-icon" size={20} />
-                                <div className="item-content">
-                                    <div className="item-title">Formatting & Consistency</div>
-                                    <div className="item-desc">Clean layout detected. Standard fonts and margins are used.</div>
-                                </div>
-                            </div>
-
-                            <div className="checklist-item warning">
-                                <AlertTriangle className="item-icon" size={20} />
-                                <div className="item-content">
-                                    <div className="item-title">Action Verbs Usage</div>
-                                    <div className="item-desc">Some bullet points are missing strong action verbs (e.g., 'Led', 'Developed'). Avoid using 'Responsible for'.</div>
-                                </div>
-                            </div>
-
-                            <div className="checklist-item danger">
-                                <XCircle className="item-icon" size={20} />
-                                <div className="item-content">
-                                    <div className="item-title">Measurable Impact</div>
-                                    <div className="item-desc">Only 20% of your points contain metrics. Add numbers (%, $, time saved) to quantify your achievements.</div>
-                                </div>
-                            </div>
-
-                            <div className="checklist-item success">
-                                <CheckCircle className="item-icon" size={20} />
-                                <div className="item-content">
-                                    <div className="item-title">Core Skills / ATS Keywords</div>
-                                    <div className="item-desc">Found 12 matching keywords for 'Software Engineer' roles (React, Java, SQL, REST APIs).</div>
-                                </div>
-                            </div>
-
-                            <div className="checklist-item warning">
-                                <AlertTriangle className="item-icon" size={20} />
-                                <div className="item-content">
-                                    <div className="item-title">Grammar & Spelling</div>
-                                    <div className="item-desc">Found 1 potential typo in the 'Projects' section. Please review closely.</div>
-                                </div>
-                            </div>
-
+                                    return (
+                                        <div key={index} className={`checklist-item ${statusClass}`}>
+                                            {statusClass === 'success' ? <CheckCircle className="item-icon" size={20} /> :
+                                                statusClass === 'warning' ? <AlertTriangle className="item-icon" size={20} /> :
+                                                    <XCircle className="item-icon" size={20} />}
+                                            <div className="item-content">
+                                                <div className="item-title">{key.replace(/_/g, ' ').toUpperCase()}</div>
+                                                <div className="item-desc">
+                                                    {Array.isArray(item) ? (item.length > 0 ? item.join(', ') : 'None') : (typeof item === 'object' ? item.text || item.message : item)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <>
+                                    {/* Fallback Display if API returns unknown shape */}
+                                    <div className="checklist-item warning">
+                                        <AlertTriangle className="item-icon" size={20} />
+                                        <div className="item-content">
+                                            <div className="item-title">Formatting</div>
+                                            <div className="item-desc">{analysisResult.formatting?.text || 'Review your formatting.'}</div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 ) : (

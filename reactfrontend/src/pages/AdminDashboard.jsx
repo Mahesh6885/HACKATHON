@@ -1,49 +1,78 @@
+import { useState, useEffect } from 'react';
 import {
     Users, TrendingUp, AlertCircle, Award,
     Calendar, ArrowUpRight, BarChart3, Clock,
-    CheckCircle2, Building2, Briefcase
+    CheckCircle2, Building2, Briefcase, Loader2
 } from 'lucide-react';
 import './AdminDashboard.css';
 
-const ALL_STUDENTS = [
-    { id: 101, testScore: 85, placed: true },
-    { id: 102, testScore: 62, placed: false },
-    { id: 103, testScore: 40, placed: false },
-    { id: 104, testScore: 92, placed: true },
-    { id: 105, testScore: 55, placed: false },
-    { id: 106, testScore: 78, placed: true },
-    { id: 107, testScore: 70, placed: false },
-    { id: 108, testScore: 80, placed: false },
-];
-
-const DEPT_STATS = [
-    { dept: 'CSE', readiness: 88, students: 42, color: '#2563eb' },
-    { dept: 'IT', readiness: 82, students: 38, color: '#16a34a' },
-    { dept: 'ECE', readiness: 75, students: 35, color: '#ca8a04' },
-    { dept: 'MECH', readiness: 68, students: 28, color: '#dc2626' },
-];
-
-const RECENT_ACTIVITY = [
-    { id: 1, type: 'placement', text: '5 Students placed in Google', time: '2 hours ago', icon: Award, cls: 'act-blue' },
-    { id: 2, type: 'test', text: 'Mock Test #4 Results Uploaded', time: '5 hours ago', icon: BarChart3, cls: 'act-green' },
-    { id: 3, type: 'student', text: '22 New Students added to CSE', time: 'Yesterday', icon: Users, cls: 'act-indigo' },
-    { id: 4, type: 'status', text: 'Amazon Interview scheduled for IT', time: 'Yesterday', icon: Calendar, cls: 'act-amber' },
-];
+const DEPT_COLORS = { CSE: '#2563eb', IT: '#16a34a', ECE: '#ca8a04', MECH: '#dc2626' };
 
 export default function AdminDashboard() {
-    const total = ALL_STUDENTS.length;
-    const placed = ALL_STUDENTS.filter(s => s.placed).length;
-    const unplaced = total - placed;
-    const avgReadiness = Math.round(ALL_STUDENTS.reduce((a, s) => a + s.testScore, 0) / total);
+    const [apiStats, setApiStats] = useState(null);
+    const [students, setStudents] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false);
+
+    const loadData = () => {
+        setIsLoading(true);
+        setFetchError(false);
+        fetch('http://localhost:8000/api/admin/dashboard/')
+            .then(r => { if (!r.ok) throw new Error('Server error'); return r.json(); })
+            .then(data => {
+                setApiStats(data.stats);
+                setStudents(data.students || []);
+            })
+            .catch(err => { console.error('AdminDashboard fetch error:', err); setFetchError(true); })
+            .finally(() => setIsLoading(false));
+    };
+
+    useEffect(() => { loadData(); }, []);
+
+    // Derive metrics from real student data
+    const total = apiStats?.total_students ?? 0;
+    const avgReadiness = apiStats?.avg_readiness ?? 0;
+    const atRisk = apiStats?.at_risk_count ?? 0;
+    const placed = Math.max(0, total - atRisk);   // students NOT at-risk are considered placed-track
+
+    // Build department breakdown from real student list
+    const deptMap = {};
+    students.forEach(s => {
+        if (!deptMap[s.dept]) deptMap[s.dept] = { students: 0, totalReadiness: 0 };
+        deptMap[s.dept].students += 1;
+        deptMap[s.dept].totalReadiness += s.readiness;
+    });
+    const deptStats = Object.entries(deptMap).map(([dept, d]) => ({
+        dept,
+        students: d.students,
+        readiness: Math.round(d.totalReadiness / d.students),
+        color: DEPT_COLORS[dept] || '#6366f1',
+    }));
 
     const stats = [
         { label: 'Total Students', value: total, icon: Users, cls: 'blue-icon', trade: '+12%' },
         { label: 'Placed Students', value: placed, icon: Award, cls: 'green-icon', trade: '+5%' },
-        { label: 'Unplaced Students', value: unplaced, icon: AlertCircle, cls: 'red-icon', trade: '-2%' },
+        { label: 'Unplaced Students', value: atRisk, icon: AlertCircle, cls: 'red-icon', trade: '-2%' },
         { label: 'Avg Readiness', value: `${avgReadiness}%`, icon: TrendingUp, cls: 'indigo-icon', trade: '+8%' },
     ];
 
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    if (isLoading) return (
+        <div style={{ textAlign: 'center', padding: '6rem', color: 'var(--text-secondary)' }}>
+            <Loader2 className="animate-spin" size={36} style={{ margin: '0 auto 1rem', color: 'var(--primary)' }} />
+            <p>Loading live data...</p>
+        </div>
+    );
+
+    if (fetchError || !apiStats) return (
+        <div style={{ textAlign: 'center', padding: '6rem' }}>
+            <AlertCircle size={48} style={{ color: '#ef4444', margin: '0 auto 1rem', display: 'block' }} />
+            <h2 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Cannot connect to server</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Make sure the Django backend is running on port 8000.</p>
+            <button onClick={loadData} style={{ padding: '0.6rem 1.5rem', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Retry</button>
+        </div>
+    );
 
     return (
         <div className="admin-dashboard-enhanced">
@@ -94,7 +123,9 @@ export default function AdminDashboard() {
                         <button className="text-btn">View All</button>
                     </div>
                     <div className="dept-perf-list">
-                        {DEPT_STATS.map(d => (
+                        {deptStats.length === 0 ? (
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>All students are in one department.</p>
+                        ) : deptStats.map(d => (
                             <div key={d.dept} className="dept-perf-item">
                                 <div className="dept-info">
                                     <span className="dept-name">{d.dept}</span>
@@ -121,18 +152,24 @@ export default function AdminDashboard() {
                         <Clock size={16} className="text-muted" />
                     </div>
                     <div className="activity-feed">
-                        {RECENT_ACTIVITY.map(act => (
-                            <div key={act.id} className="activity-item">
-                                <div className={`activity-icon ${act.cls}`}>
-                                    <act.icon size={16} />
+                        {students.length === 0 ? (
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', padding: '1rem 0' }}>No recent activity.</p>
+                        ) : students
+                            .filter(s => s.last_active && s.last_active !== 'Never')
+                            .slice(0, 5)
+                            .map(s => (
+                                <div key={s.id} className="activity-item">
+                                    <div className="activity-icon act-blue">
+                                        <Users size={16} />
+                                    </div>
+                                    <div className="activity-body">
+                                        <p className="activity-text">{s.name} was active</p>
+                                        <span className="activity-time">{s.last_active}</span>
+                                    </div>
+                                    <ArrowUpRight size={16} className="activity-arrow" />
                                 </div>
-                                <div className="activity-body">
-                                    <p className="activity-text">{act.text}</p>
-                                    <span className="activity-time">{act.time}</span>
-                                </div>
-                                <ArrowUpRight size={16} className="activity-arrow" />
-                            </div>
-                        ))}
+                            ))
+                        }
                     </div>
                     <button className="activity-more-btn">See Full History</button>
                 </div>

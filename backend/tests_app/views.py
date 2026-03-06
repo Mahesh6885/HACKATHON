@@ -12,8 +12,9 @@ class TestScoreListCreateView(generics.ListCreateAPIView):
     serializer_class = TestScoreSerializer
 
     def get_queryset(self):
-        user = self.request.user if self.request.user.is_authenticated else 1
-        return TestScore.objects.filter(user_id=user).order_by('-taken_at')
+        from django.contrib.auth.models import User
+        user = self.request.user if self.request.user.is_authenticated else User.objects.first()
+        return TestScore.objects.filter(user=user).order_by('-taken_at')
 
     def perform_create(self, serializer):
         user = self.request.user if self.request.user.is_authenticated else None

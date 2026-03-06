@@ -1,21 +1,41 @@
-import google.generativeai as genai
-from decouple import config
+import os
+from groq import Groq
 import json
 
-# Setup Gemini API (Free Tier Gemni-pro)
-genai.configure(api_key=config("GEMINI_API_KEY", default="YOUR_API_KEY_HERE"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "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")
 
 def generate_first_question(role_target):
+    if GROQ_API_KEY == "YOUR_API_KEY_HERE":
+        return {"question": f"What is your typical approach to system design for a highly scalable {role_target} application? Can you walk me through your architecture?"}
+        
+    client = Groq(api_key=GROQ_API_KEY)
+    
     prompt = f"""
     You are an AI Mock Interviewer interviewing a student for a {role_target} role.
     Ask the very first technical question. Make it a medium difficulty question.
     Only return the question text, nothing else.
     """
-    response = model.generate_content(prompt)
-    return {"question": response.text.strip()}
+    
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.4,
+        max_completion_tokens=1024,
+    )
+    
+    return {"question": completion.choices[0].message.content.strip()}
 
 def evaluate_and_next(role_target, previous_q, student_answer):
+    if GROQ_API_KEY == "YOUR_API_KEY_HERE":
+        return {
+            "score": 8,
+            "feedback": "You clearly explained the concepts, but missed some edge cases.",
+            "ideal_hint": "Consider mentioning load balancing and database sharding.",
+            "next_question": f"Excellent. Next question: Can you explain how you would handle zero-downtime database migrations in a production {role_target} environment?"
+        }
+        
+    client = Groq(api_key=GROQ_API_KEY)
+    
     prompt = f"""
     You are an AI Technical Interviewer for a {role_target} position.
     
@@ -35,10 +55,17 @@ def evaluate_and_next(role_target, previous_q, student_answer):
     }}
     """
     
-    response = model.generate_content(prompt)
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.4,
+        max_completion_tokens=1024,
+    )
+    
+    response_text = completion.choices[0].message.content
     
     # Clean the JSON response (often model wraps it in ```json ... ```)
-    clean_text = response.text.replace('```json', '').replace('```', '').strip()
+    clean_text = response_text.replace('```json', '').replace('```', '').strip()
     
     try:
         return json.loads(clean_text)

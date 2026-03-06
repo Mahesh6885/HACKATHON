@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
     TrendingUp,
@@ -9,13 +10,38 @@ import {
     ArrowRight,
     MoreHorizontal,
     Star,
-    Zap
+    Zap,
+    RefreshCw
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import './Dashboard.css';
 
 export default function Dashboard() {
-    const readinessScore = 68;
+    const [readinessData, setReadinessData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false);
+
+    const loadData = () => {
+        setIsLoading(true);
+        setFetchError(false);
+        const token = localStorage.getItem('access_token');
+        fetch('http://localhost:8000/api/readiness/dashboard-stats/', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        })
+            .then(res => { if (!res.ok) throw new Error('Server error'); return res.json(); })
+            .then(data => {
+                setReadinessData(data);
+            })
+            .catch(err => {
+                console.error("Failed to fetch dashboard metrics", err);
+                setFetchError(true);
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    useEffect(() => { loadData(); }, []);
+
+    const readinessScore = readinessData?.metrics?.readiness_percentage || 0;
     const pieData = [
         { name: 'Score', value: readinessScore },
         { name: 'Remaining', value: 100 - readinessScore }
@@ -23,32 +49,59 @@ export default function Dashboard() {
 
     const COLORS = ['#FFFFFF', 'rgba(255, 255, 255, 0.2)'];
 
-    const tasks = [
-        { id: 1, title: 'Update resume project section', category: 'Resume', status: 'pending', priority: 'High' },
-        { id: 2, title: 'Take aptitude test weekly', category: 'Tests', status: 'pending', priority: 'Medium' },
-        { id: 3, title: 'Complete AWS Cloud Practitioner', category: 'Certifications', status: 'in-progress', priority: 'High' },
-        { id: 4, title: 'Attend 2 mock interviews', category: 'Interviews', status: 'pending', priority: 'Low' }
+    // Fallback tasks if AI Roadmap fails to load or while loading
+    const defaultTasks = [
+        { id: 1, title: 'Upload resume for scoring', category: 'Resume', status: 'pending', priority: 'High' },
+        { id: 2, title: 'Take a mock interview', category: 'Interviews', status: 'pending', priority: 'High' }
     ];
 
+    const displayTasks = readinessData?.ai_roadmap ?
+        readinessData.ai_roadmap.map((taskObj, i) => ({
+            id: i,
+            title: typeof taskObj === 'string' ? taskObj : taskObj.title,
+            category: typeof taskObj === 'string' ? 'AI Suggestion' : taskObj.category,
+            status: 'pending',
+            priority: typeof taskObj === 'string' ? (i === 0 ? 'High' : 'Medium') : taskObj.priority
+        })) : defaultTasks;
+
     const quickStats = [
-        { label: 'Completed Tests', value: '12', icon: Zap, color: 'text-indigo-600' },
-        { label: 'Avg. Percentile', value: '84%', icon: TrendingUp, color: 'text-emerald-600' },
-        { label: 'Certifications', value: '3', icon: Award, color: 'text-amber-600' }
+        { label: 'Resume Score', value: `${readinessData?.metrics?.resume_score || 0}`, icon: FileText, color: 'text-indigo-600' },
+        { label: 'Interview Avg', value: `${readinessData?.metrics?.interview_score || 0}/100`, icon: TrendingUp, color: 'text-emerald-600' },
+        { label: 'Test Score', value: `${readinessData?.metrics?.test_score || 0}`, icon: Zap, color: 'text-amber-600' }
     ];
 
     const getGreeting = () => {
-        const hour = new Date().getHours();
-        if (hour < 12) return 'Good morning';
-        if (hour < 17) return 'Good afternoon';
-        return 'Good evening';
+        // Use explicit IST timezone so the greeting is always accurate in India
+        const hour = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false });
+        const h = parseInt(hour, 10);
+        if (h >= 5 && h < 12) return 'Good morning';
+        if (h >= 12 && h < 17) return 'Good afternoon';
+        if (h >= 17 && h < 21) return 'Good evening';
+        return 'Good night';
     };
+
+    if (isLoading) return (
+        <div className="dashboard-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70vh', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ width: 40, height: 40, border: '4px solid var(--primary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            <p style={{ color: 'var(--text-secondary)' }}>Loading your dashboard...</p>
+        </div>
+    );
+
+    if (fetchError) return (
+        <div className="dashboard-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70vh', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ fontSize: '3rem' }}>⚠️</div>
+            <h2 style={{ color: 'var(--text-primary)', margin: 0 }}>Cannot connect to server</h2>
+            <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Make sure the backend is running at port 8000.</p>
+            <button onClick={loadData} style={{ padding: '0.6rem 1.5rem', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, marginTop: '0.5rem' }}>Retry</button>
+        </div>
+    );
 
     return (
         <div className="dashboard-wrapper">
             {/* Header with Personalized Greeting */}
             <div className="page-header decorative">
                 <div className="header-greeting">
-                    <h1 className="page-title">{getGreeting()}, John! ✨</h1>
+                    <h1 className="page-title">{getGreeting()}, {readinessData?.user_info?.name || 'Student'}! ✨</h1>
                     <p className="page-subtitle">You're in the top 15% of your batch. Keep up the great work!</p>
                 </div>
                 <div className="header-badges">
@@ -73,18 +126,18 @@ export default function Dashboard() {
                         <div className="hero-details">
                             <div className="hero-detail-item">
                                 <span className="h-label">Focus Area</span>
-                                <span className="h-value">Logical Reasoning</span>
+                                <span className="h-value">{readinessData?.ai_roadmap && readinessData.ai_roadmap.length > 0 ? (typeof readinessData.ai_roadmap[0] === 'string' ? readinessData.ai_roadmap[0].split(' ').slice(0, 2).join(' ') : readinessData.ai_roadmap[0].category) : 'General Aptitude'}</span>
                             </div>
                             <div className="hero-detail-divider"></div>
                             <div className="hero-detail-item">
-                                <span className="h-label">Daily Goal</span>
-                                <span className="h-value">1 Mock Test</span>
+                                <span className="h-label">Top Priority</span>
+                                <span className="h-value">{readinessData?.ai_roadmap && readinessData.ai_roadmap.length > 0 ? (typeof readinessData.ai_roadmap[0] === 'string' ? 'Review Plan' : (readinessData.ai_roadmap[0].title ? readinessData.ai_roadmap[0].title.split(' ').slice(0, 3).join(' ') : 'Complete 1 Mock')) : 'Complete 1 Mock'}</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="hero-viz">
-                        <div className="viz-wrapper">
+                        <div className="viz-wrapper" style={{ height: '250px', position: 'relative' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
@@ -127,22 +180,28 @@ export default function Dashboard() {
                     </div>
 
                     <div className="task-scroll">
-                        {tasks.map(task => (
-                            <div key={task.id} className="task-row">
-                                <div className={`priority-indicator ${task.priority.toLowerCase()}`}></div>
-                                <div className="task-info">
-                                    <div className="task-text">{task.title}</div>
-                                    <div className="task-sub">
-                                        <span className="task-tag">{task.category}</span>
-                                        <span className="dot"></span>
-                                        <span className="task-due">{task.priority} Priority</span>
-                                    </div>
-                                </div>
-                                <button className="task-check">
-                                    <ArrowRight size={16} />
-                                </button>
+                        {isLoading ? (
+                            <div style={{ textAlign: 'center', padding: '2rem' }}>
+                                <RefreshCw className="animate-spin" size={24} style={{ margin: '0 auto', color: 'var(--primary)' }} />
                             </div>
-                        ))}
+                        ) : (
+                            displayTasks.map(task => (
+                                <div key={task.id} className="task-row">
+                                    <div className={`priority-indicator ${task.priority.toLowerCase()}`}></div>
+                                    <div className="task-info">
+                                        <div className="task-text">{task.title}</div>
+                                        <div className="task-sub">
+                                            <span className="task-tag">{task.category}</span>
+                                            <span className="dot"></span>
+                                            <span className="task-due">{task.priority} Priority</span>
+                                        </div>
+                                    </div>
+                                    <button className="task-check">
+                                        <ArrowRight size={16} />
+                                    </button>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
 

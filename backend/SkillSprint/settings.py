@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "auth_app",
     "tests_app",
     "certs_app",
+    "organization_app",
+    "admin_app",
 ]
 
 MIDDLEWARE = [
@@ -84,9 +86,13 @@ WSGI_APPLICATION = "SkillSprint.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'skillsprint_db',
+        'USER': 'postgres',
+        'PASSWORD': 'Error@123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

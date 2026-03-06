@@ -10,8 +10,10 @@ class DashboardMetricsView(APIView):
     # permission_classes = [IsAuthenticated] # Uncomment for prod
     
     def get(self, request, *args, **kwargs):
-        # We will use dummy user 1 for hackathon tests if not logged in
-        user_id = request.user.id if request.user.is_authenticated else 1
+        from django.contrib.auth.models import User
+        # We will use the first mock user for hackathon tests if not logged in
+        user = request.user if request.user.is_authenticated else User.objects.first()
+        user_id = user.id if user else 1
         
         # 1. Fetch Latest Resume Score
         latest_resume = Resume.objects.filter(user_id=user_id).order_by('-uploaded_at').first()
@@ -21,9 +23,24 @@ class DashboardMetricsView(APIView):
         interviews = InterviewSession.objects.filter(user_id=user_id)
         interview_score = sum(i.score for i in interviews) / len(interviews) if interviews else 0
         
-        # 3. Dummy Test & Cert Scores (Since those apps aren't fully fleshed out yet)
-        test_score = 75
-        cert_score = 60
+        # 3. Fetch User and Student Profile (for real data instead of dummy)
+        from django.contrib.auth.models import User
+        from organization_app.models import StudentProfile
+        
+        try:
+            user = User.objects.get(id=user_id)
+            student_profile = StudentProfile.objects.get(user=user)
+            username = user.get_full_name() or user.username.capitalize()
+            test_score = student_profile.previous_test_score
+            department_name = student_profile.year.department.name
+            year_name = student_profile.year.year_name
+        except (User.DoesNotExist, StudentProfile.DoesNotExist):
+            username = "Guest"
+            test_score = 0
+            department_name = "Unknown"
+            year_name = "Unknown"
+            
+        cert_score = 60 # Certs app is not yet modeled
         
         # 4. Calculate Overall Readiness
         overall_ready = (resume_score * 0.25) + (test_score * 0.25) + (cert_score * 0.20) + (interview_score * 0.30)
@@ -43,6 +60,11 @@ class DashboardMetricsView(APIView):
                 "test_score": test_score,
                 "cert_score": cert_score,
                 "interview_score": round(interview_score, 1)
+            },
+            "user_info": {
+                "name": username,
+                "department": department_name,
+                "year": year_name
             },
             "ai_roadmap": ai_tasks
         }, status=status.HTTP_200_OK)

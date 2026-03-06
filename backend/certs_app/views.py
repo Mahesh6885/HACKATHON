@@ -1,5 +1,13 @@
 from rest_framework import serializers, generics, permissions
 from .models import Certification
+from django.contrib.auth.models import User
+
+def _get_user(request):
+    """Return the authenticated user, or the shared hackathon_test fallback."""
+    if request.user.is_authenticated:
+        return request.user
+    user, _ = User.objects.get_or_create(username='hackathon_test')
+    return user
 
 class CertificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,15 +20,9 @@ class CertificationListCreateView(generics.ListCreateAPIView):
     serializer_class = CertificationSerializer
 
     def get_queryset(self):
-        user = self.request.user if self.request.user.is_authenticated else 1
-        return Certification.objects.filter(user_id=user).order_by('-completed_at')
+        user = _get_user(self.request)
+        return Certification.objects.filter(user=user).order_by('-completed_at')
 
     def perform_create(self, serializer):
-        user = self.request.user if self.request.user.is_authenticated else None
-        if user:
-            serializer.save(user=user)
-        else:
-            # Fallback for hackathon testing without JWT
-            from django.contrib.auth.models import User
-            dummy_user, _ = User.objects.get_or_create(username='hackathon_test')
-            serializer.save(user=dummy_user)
+        user = _get_user(self.request)
+        serializer.save(user=user)

@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
     LayoutDashboard,
     FileText,
@@ -9,16 +10,34 @@ import {
     Search,
     Bell,
     LogOut,
-    GraduationCap
+    GraduationCap,
+    Map,
+    Settings
 } from 'lucide-react';
 import './AppLayout.css';
 
 const AppLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [userData, setUserData] = useState(null);
 
     // Get userRole from localStorage; fallback to student
     const userRole = localStorage.getItem('userRole') || 'student';
+
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        fetch('http://localhost:8000/api/auth/profile/', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        })
+            .then(res => res.json())
+            .then(data => {
+                setUserData(data);
+                if (data.role && data.role !== userRole && false) { // disable forced redirect override for now
+                    localStorage.setItem('userRole', data.role);
+                }
+            })
+            .catch(err => console.error("Failed to load user profile", err));
+    }, [userRole]);
 
     const handleLogout = () => {
         localStorage.removeItem('userRole');
@@ -70,16 +89,26 @@ const AppLayout = () => {
                                 <MessageSquare size={20} />
                                 <span>Mock Interviews</span>
                             </NavLink>
+
+                            <NavLink to="/roadmap" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                                <Map size={20} />
+                                <span>AI Roadmap</span>
+                            </NavLink>
+
+                            <NavLink to="/settings" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                                <Settings size={20} />
+                                <span>Settings</span>
+                            </NavLink>
                         </>
                     )}
                 </nav>
 
                 <div className="sidebar-footer">
                     <div className="user-profile">
-                        <div className="avatar">{userRole === 'admin' ? 'AD' : 'JD'}</div>
+                        <div className="avatar">{userRole === 'admin' ? 'AD' : (userData?.display_name ? userData.display_name.substring(0, 2).toUpperCase() : '..')}</div>
                         <div className="user-info">
-                            <span className="user-name">{userRole === 'admin' ? 'Administrator' : 'John Doe'}</span>
-                            <span className="user-role">{userRole === 'admin' ? 'Placement Cell' : 'Student CSE'}</span>
+                            <span className="user-name">{userRole === 'admin' ? 'Administrator' : (userData?.display_name || 'Loading...')}</span>
+                            <span className="user-role">{userRole === 'admin' ? 'Placement Cell' : (userData?.role_desc || 'Loading...')}</span>
                         </div>
                     </div>
                 </div>

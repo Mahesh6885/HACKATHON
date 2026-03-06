@@ -1,4 +1,5 @@
 import pdfplumber
+import docx
 import re
 
 # Simple set of technical keywords to map against the resume
@@ -7,14 +8,21 @@ ats_keywords = {
     'docker', 'aws', 'machine learning', 'api', 'git', 'node'
 }
 
-def extract_text(pdf_path):
+def extract_text(file_path):
     text = ""
     try:
-        with pdfplumber.open(pdf_path) as pdf:
-            for page in pdf.pages:
-                text += page.extract_text() + "\n"
+        if file_path.lower().endswith('.pdf'):
+            with pdfplumber.open(file_path) as pdf:
+                for page in pdf.pages:
+                    extracted = page.extract_text()
+                    if extracted:
+                        text += extracted + "\n"
+        elif file_path.lower().endswith('.docx'):
+            doc = docx.Document(file_path)
+            for para in doc.paragraphs:
+                text += para.text + "\n"
     except Exception as e:
-        print(f"Error reading PDF: {e}")
+        print(f"Error reading file {file_path}: {e}")
     return text.lower()
 
 def check_keywords(text):
