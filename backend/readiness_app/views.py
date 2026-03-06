@@ -17,11 +17,12 @@ class DashboardMetricsView(APIView):
         
         # 1. Fetch Latest Resume Score
         latest_resume = Resume.objects.filter(user_id=user_id).order_by('-uploaded_at').first()
-        resume_score = latest_resume.score if latest_resume else 0
+        resume_score = latest_resume.score if (latest_resume and latest_resume.score) else 0
         
         # 2. Fetch Interview Scores
         interviews = InterviewSession.objects.filter(user_id=user_id)
-        interview_score = sum(i.score for i in interviews) / len(interviews) if interviews else 0
+        valid_scores = [float(i.score) for i in interviews if i.score is not None]
+        interview_score = sum(valid_scores) / len(valid_scores) if valid_scores else 0
         
         # 3. Fetch User and Student Profile (for real data instead of dummy)
         from django.contrib.auth.models import User
@@ -31,12 +32,12 @@ class DashboardMetricsView(APIView):
             user = User.objects.get(id=user_id)
             student_profile = StudentProfile.objects.get(user=user)
             username = user.get_full_name() or user.username.capitalize()
-            test_score = student_profile.previous_test_score
+            test_score = float(student_profile.previous_test_score) if student_profile.previous_test_score is not None else 0.0
             department_name = student_profile.year.department.name
             year_name = student_profile.year.year_name
         except (User.DoesNotExist, StudentProfile.DoesNotExist):
             username = "Guest"
-            test_score = 0
+            test_score = 0.0
             department_name = "Unknown"
             year_name = "Unknown"
             

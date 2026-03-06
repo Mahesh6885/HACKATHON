@@ -126,12 +126,12 @@ export default function Dashboard() {
                         <div className="hero-details">
                             <div className="hero-detail-item">
                                 <span className="h-label">Focus Area</span>
-                                <span className="h-value">{readinessData?.ai_roadmap && readinessData.ai_roadmap.length > 0 ? (typeof readinessData.ai_roadmap[0] === 'string' ? readinessData.ai_roadmap[0].split(' ').slice(0, 2).join(' ') : readinessData.ai_roadmap[0].category) : 'General Aptitude'}</span>
+                                <span className="h-value">{readinessData?.ai_roadmap && readinessData.ai_roadmap.length > 0 ? (typeof readinessData.ai_roadmap[0] === 'string' ? readinessData.ai_roadmap[0].split(' ').slice(0, 2).join(' ') : (readinessData.ai_roadmap[0].category || 'General Aptitude')) : 'General Aptitude'}</span>
                             </div>
                             <div className="hero-detail-divider"></div>
                             <div className="hero-detail-item">
                                 <span className="h-label">Top Priority</span>
-                                <span className="h-value">{readinessData?.ai_roadmap && readinessData.ai_roadmap.length > 0 ? (typeof readinessData.ai_roadmap[0] === 'string' ? 'Review Plan' : (readinessData.ai_roadmap[0].title ? readinessData.ai_roadmap[0].title.split(' ').slice(0, 3).join(' ') : 'Complete 1 Mock')) : 'Complete 1 Mock'}</span>
+                                <span className="h-value">{readinessData?.ai_roadmap && readinessData.ai_roadmap.length > 0 ? (typeof readinessData.ai_roadmap[0] === 'string' ? 'Review Plan' : (readinessData.ai_roadmap[0].title ? String(readinessData.ai_roadmap[0].title).split(' ').slice(0, 3).join(' ') : 'Complete 1 Mock')) : 'Complete 1 Mock'}</span>
                             </div>
                         </div>
                     </div>
