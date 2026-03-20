@@ -1,0 +1,423 @@
+/* ── StudentMaintenance.css ── */
+
+.sm-page {
+    padding: 0;
+    max-width: 100%;
+}
+
+/* ── Header Area ── */
+.sm-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.sm-page-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+}
+
+.sm-page-sub {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.sm-global-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* ── Breadcrumb Navigation ── */
+.sm-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.sm-bc-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    font-size: 0.95rem;
+}
+
+.sm-bc-btn:hover {
+    text-decoration: underline;
+}
+
+
+/* ── New Data Card UI (Sleek White Cards) ── */
+.sm-datacard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.sm-datacard {
+    background: white;
+    /* Changed from light pink to crisp white */
+    border-radius: 16px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--border, #e2e8f0);
+    border-top: 4px solid var(--primary, #6366f1);
+    /* Sleek colored top bar */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.sm-datacard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary, #6366f1);
+}
+
+.sm-datacard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.sm-datacard-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary, #1e293b);
+    margin: 0;
+}
+
+.sm-datacard-icon {
+    font-size: 1.6rem;
+    background: var(--bg-secondary, #f8fafc);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.sm-datacard-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border, #e2e8f0);
+}
+
+.sm-datacard-row:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.sm-datacard-label {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.sm-datacard-val1 {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #a855f7;
+    /* Purple */
+}
+
+.sm-datacard-val2 {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #3b82f6;
+    /* Blue */
+}
+
+/* Utility layout cards (fallback for generic views) */
+.sm-card-body {
+    background: var(--card-bg, white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+
+/* ── Student Table ── */
+.sm-student-table-container {
+    background: var(--card-bg, white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.sm-student-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sm-student-table thead tr {
+    background: var(--bg-secondary, #f8fafc);
+}
+
+.sm-student-table th {
+    text-align: left;
+    padding: 1rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.sm-student-row {
+    border-top: 1px solid var(--border);
+    transition: background 0.15s;
+}
+
+.sm-student-row:hover {
+    background: var(--primary-light, #eff6ff);
+}
+
+.sm-student-table td {
+    padding: 0.85rem 1.25rem;
+    vertical-align: middle;
+}
+
+.sm-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #6366f1);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+
+/* ── Badges ── */
+.sm-score-pill {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.7rem;
+    border-radius: 99px;
+    display: inline-block;
+}
+
+.sm-score-pill.high {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.sm-score-pill.med {
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+.sm-score-pill.low {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+/* ── Buttons ── */
+.sm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+}
+
+.sm-btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.sm-btn-primary:hover {
+    opacity: 0.9;
+}
+
+.sm-btn-purple {
+    background: #a855f7;
+    color: white;
+}
+
+.sm-btn-purple:hover {
+    background: #9333ea;
+}
+
+.sm-btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.sm-btn-danger:hover {
+    background: #dc2626;
+}
+
+.sm-btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.sm-btn-ghost:hover {
+    background: var(--bg-secondary);
+}
+
+.sm-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 0.15s, color 0.15s;
+    color: var(--text-secondary);
+}
+
+.sm-delete-btn {
+    color: #ef4444;
+}
+
+.sm-delete-btn:hover {
+    background: #fee2e2;
+}
+
+.sm-edit-btn {
+    color: var(--primary);
+}
+
+.sm-edit-btn:hover {
+    background: var(--primary-light);
+}
+
+
+/* ── Modal ── */
+.sm-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.sm-modal-box {
+    background: var(--card-bg, white);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.2s ease;
+    overflow: hidden;
+}
+
+.sm-confirm-box {
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(24px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.sm-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.sm-modal-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.sm-form-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.sm-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+.sm-input {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: var(--bg-secondary, #f8fafc);
+    color: var(--text-primary);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+}
+
+.sm-input:focus {
+    border-color: var(--primary);
+    background: white;
+}
+
+.sm-error {
+    color: #dc2626;
+    font-size: 0.78rem;
+    margin: 0;
+}
